@@ -1,0 +1,16 @@
+﻿using AuthenticationService.Models;
+using AuthenticationService.Repository.Filter;
+
+namespace AuthenticationService.Repository
+{
+    public class DummyUserRepository : IUserRepository
+    {
+        public IEnumerable<UserModel> Search(IFilter<UserModel> filter)
+        {
+            return new List<UserModel>()
+            { 
+                new UserModel() { Email = "dummy", GivenName = "dummy", Password = "dummy", Username = "dummy", Role = "Administrator", Surname = "dummy" }
+            };
+        }
+    }
+}

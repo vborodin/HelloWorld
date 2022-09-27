@@ -1,5 +1,10 @@
 using System.Text;
 
+using AuthenticationService.Models;
+using AuthenticationService.Repository;
+using AuthenticationService.Services;
+using AuthenticationService.TokenGenerator;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -24,6 +29,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
+builder.Services.AddSingleton<ITokenGenerator<UserModel>>((serviceProvider) => 
+{
+    var config = builder.Configuration;
+    return new UserModelTokenGenerator(
+        key: config["Jwt:Key"],
+        issuer: config["Jwt:issuer"],
+        audience: config["Jwt:audience"],
+        expirationPeriodMinutes: int.Parse(config["Jwt:expirationPeriodMinutes"]));
+});
+builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IUserRepository, DummyUserRepository>();
 
 var app = builder.Build();
 
