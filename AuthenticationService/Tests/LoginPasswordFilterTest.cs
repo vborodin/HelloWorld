@@ -42,6 +42,14 @@ namespace AuthenticationService.Tests
             Assert.IsEmpty(result);
         }
 
+        [Test]
+        public void UsernameIsCaseInsensitive()
+        {
+            var filter = new UsernamePasswordFilter("john", "2");
+            var result = filter.Filter(source);
+            Assert.True(result.Count() == 1);
+        }
+
         private static IEnumerable<UserModel> CreateTestData()
         {
             return new List<UserModel> {
@@ -49,6 +57,7 @@ namespace AuthenticationService.Tests
                 new () { Username = "1", Password = "2" },
                 new () { Username = "2", Password = "2" },
                 new () { Username = "2", Password = "2" },
+                new () { Username = "John", Password = "2" },
                 new () { Username = null, Password = "1" },
                 new () { Username = "1", Password = null },
                 new () { Username = null, Password = null }
