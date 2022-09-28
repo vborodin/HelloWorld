@@ -15,7 +15,7 @@ namespace AuthenticationService.Repository.Filter
 
         public IEnumerable<UserModel> Filter(IEnumerable<UserModel> source)
         {
-            return source.Where(x => x.Username?.ToLower() == username.ToLower() && x.Password == password);
+            return source.Where(x => x.Username?.ToLower() == username?.ToLower() && x.Password == password);
         }
     }
 }

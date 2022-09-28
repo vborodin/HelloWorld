@@ -29,6 +29,34 @@ namespace AuthenticationService.Tests
             {
                 generator.Generate(value);
             });
+            value.Username = "UsernameValue";
+
+            value.Surname = null;
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                generator.Generate(value);
+            });
+            value.Surname = "SurnameValue";
+
+            value.Role = null;
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                generator.Generate(value);
+            });
+            value.Role = "RoleValue";
+
+            value.GivenName = null;
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                generator.Generate(value);
+            });
+            value.GivenName = "GivenNameValue";
+
+            value.Email = null;
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                generator.Generate(value);
+            });
         }
 
         [Test]
