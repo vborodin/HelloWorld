@@ -2,7 +2,6 @@
 using AuthenticationService.Services;
 using AuthenticationService.TokenGenerator;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.Controllers
