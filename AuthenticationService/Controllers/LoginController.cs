@@ -22,14 +22,14 @@ namespace AuthenticationService.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult Login([FromBody] UserLogin userLogin)
+        public IActionResult Login([FromBody] UserLogin userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
         {
             var user = userService.GetUser(userLogin);
             if (user == null)
             {
                 return Unauthorized();
             }
-            var token = tokenGenerator.Generate(user);
+            var token = tokenGenerator.Generate(user, audience, expirationPeriodMinutes);
             return Ok(token);
         }
     }

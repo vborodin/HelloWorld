@@ -23,7 +23,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = "http://localhost:62730",
-            // TODO: audience must be a parameter of the login request
             ValidAudience = "http://localhost:62730",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MzI831SfbwBflL0SvFuvhy3SMjWEQ4ufzA1fa9eidcFOkZsoQCkHDAWn1mMPAQO3JpJ7gKuyBIhUChO9JXCuirplWzcOPCLi8rCG"))
         };

@@ -34,9 +34,7 @@ builder.Services.AddSingleton<ITokenGenerator<UserModel>>((serviceProvider) =>
     var config = builder.Configuration;
     return new UserModelTokenGenerator(
         key: config["Jwt:Key"],
-        issuer: config["Jwt:issuer"],
-        audience: config["Jwt:audience"],
-        expirationPeriodMinutes: int.Parse(config["Jwt:expirationPeriodMinutes"]));
+        issuer: config["Jwt:issuer"]);
 });
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IUserRepository, DummyUserRepository>();

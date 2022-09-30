@@ -13,21 +13,19 @@ namespace AuthenticationService.TokenGenerator
     {
         private readonly SigningCredentials credentials;
         private readonly string issuer;
-        private readonly string audience;
-        private readonly int expirationPeriodMinutes;
 
-        public UserModelTokenGenerator(string key, string issuer, string audience, int expirationPeriodMinutes)
+        public UserModelTokenGenerator(string key, string issuer)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             this.credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             this.issuer = issuer;
-            this.audience = audience;
-            this.expirationPeriodMinutes = expirationPeriodMinutes;
         }
 
-        public string Generate(UserModel value)
+        public string Generate(UserModel value, string audience, int expirationPeriodMinutes)
         {
             VerifyUserModel(value);
+            VerifyAudience(audience);
+            VerifyExpirationPeriod(expirationPeriodMinutes);
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, value.Username!),
@@ -38,9 +36,9 @@ namespace AuthenticationService.TokenGenerator
             };
             var token = new JwtSecurityToken(
                 issuer: this.issuer,
-                audience: this.audience,
+                audience: audience,
                 claims: claims, 
-                expires: DateTime.Now.AddMinutes(this.expirationPeriodMinutes),
+                expires: DateTime.UtcNow.AddMinutes(expirationPeriodMinutes),
                 signingCredentials: this.credentials);
             var handler = new JwtSecurityTokenHandler();
             return handler.WriteToken(token);
@@ -59,6 +57,26 @@ namespace AuthenticationService.TokenGenerator
                 value.Role == null)
             {
                 throw new InvalidOperationException($"Required field of {nameof(UserModel)} is null");
+            }
+        }
+
+        private void VerifyAudience(string audience)
+        {
+            if (audience == null)
+            {
+                throw new ArgumentNullException("Audience must not be null");
+            }
+            if (audience == string.Empty)
+            {
+                throw new InvalidOperationException("Audience must not be empty");
+            }
+        }
+
+        private void VerifyExpirationPeriod(int expirationPeriodMinutes)
+        {
+            if (expirationPeriodMinutes < 1)
+            {
+                throw new ArgumentOutOfRangeException("Expiration period must be positive");
             }
         }
     }

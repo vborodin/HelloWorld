@@ -2,6 +2,6 @@
 {
     public interface ITokenGenerator<T>
     {
-        string Generate(T value);
+        string Generate(T value, string audience, int expirationPeriodMinutes);
     }
 }
