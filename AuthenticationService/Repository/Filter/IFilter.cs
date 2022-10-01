@@ -1,7 +1,6 @@
-﻿namespace AuthenticationService.Repository.Filter
+﻿namespace AuthenticationService.Repository.Filter;
+
+public interface IFilter<T>
 {
-    public interface IFilter<T>
-    {
-        public IEnumerable<T> Apply(IEnumerable<T> source);
-    }
+    public IEnumerable<T> Apply(IEnumerable<T> source);
 }

@@ -1,7 +1,7 @@
 using System.Text;
 
-using AuthenticationService.Models;
 using AuthenticationService.Repository;
+using AuthenticationService.Repository.Model;
 using AuthenticationService.Services;
 using AuthenticationService.TokenGenerator;
 

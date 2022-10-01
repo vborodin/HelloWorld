@@ -1,36 +1,36 @@
 ﻿using AuthenticationService.Models;
 using AuthenticationService.Repository;
 using AuthenticationService.Repository.Filter;
+using AuthenticationService.Repository.Model;
 
-namespace AuthenticationService.Services
+namespace AuthenticationService.Services;
+
+public class UserService : IUserService
 {
-    public class UserService : IUserService
+    private readonly IUserRepository repository;
+
+    public UserService(IUserRepository repository)
     {
-        private readonly IUserRepository repository;
+        this.repository = repository;
+    }
 
-        public UserService(IUserRepository repository)
+    public UserModel? GetUser(UserLogin userLogin)
+    {
+        VerifyUserLogin(userLogin);
+        var filter = new UsernamePasswordFilter(userLogin.Username!, userLogin.Password!);
+        var result = this.repository.Get(filter);
+        return result.FirstOrDefault();
+    }
+
+    private void VerifyUserLogin(UserLogin value)
+    {
+        if (value == null)
         {
-            this.repository = repository;
+            throw new ArgumentNullException($"{nameof(UserLogin)} value is null");
         }
-
-        public UserModel? GetUser(UserLogin userLogin)
+        if (value.Username == null || value.Password == null)
         {
-            VerifyUserLogin(userLogin);
-            var filter = new UsernamePasswordFilter(userLogin.Username!, userLogin.Password!);
-            var result = repository.Get(filter);
-            return result.FirstOrDefault();
-        }
-
-        private void VerifyUserLogin(UserLogin value)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException($"{nameof(UserLogin)} value is null");
-            }
-            if (value.Username == null || value.Password == null)
-            {
-                throw new InvalidOperationException($"Required field of {nameof(UserLogin)} is null");
-            }
+            throw new InvalidOperationException($"Required field of {nameof(UserLogin)} is null");
         }
     }
 }
