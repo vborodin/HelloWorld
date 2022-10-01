@@ -13,7 +13,7 @@ namespace AuthenticationService.Tests
         public void ReturnsCorrectUserModel()
         {
             var filter = new UsernamePasswordFilter("1", "1");
-            var result = filter.Filter(source);
+            var result = filter.Apply(source);
             var match = result.Single();
             Assert.True(match.Username == "1" && match.Password == "1");
         }
@@ -22,7 +22,7 @@ namespace AuthenticationService.Tests
         public void ReturnsAllUserModels()
         {
             var filter = new UsernamePasswordFilter("2", "2");
-            var result = filter.Filter(source);
+            var result = filter.Apply(source);
             Assert.True(result.Count() == 2);
         }
 
@@ -30,7 +30,7 @@ namespace AuthenticationService.Tests
         public void ReturnsNothingForIncorrectLogin()
         {
             var filter = new UsernamePasswordFilter("nonexistent", "1");
-            var result = filter.Filter(source);
+            var result = filter.Apply(source);
             Assert.IsEmpty(result);
         }
 
@@ -38,7 +38,7 @@ namespace AuthenticationService.Tests
         public void ReturnsNothingForIncorrectPassword()
         {
             var filter = new UsernamePasswordFilter("1", "nonexistent");
-            var result = filter.Filter(source);
+            var result = filter.Apply(source);
             Assert.IsEmpty(result);
         }
 
@@ -46,7 +46,7 @@ namespace AuthenticationService.Tests
         public void UsernameIsCaseInsensitive()
         {
             var filter = new UsernamePasswordFilter("john", "2");
-            var result = filter.Filter(source);
+            var result = filter.Apply(source);
             Assert.True(result.Count() == 1);
         }
 

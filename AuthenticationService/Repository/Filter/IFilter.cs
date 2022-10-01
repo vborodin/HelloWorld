@@ -2,6 +2,6 @@
 {
     public interface IFilter<T>
     {
-        public IEnumerable<T> Filter(IEnumerable<T> source);
+        public IEnumerable<T> Apply(IEnumerable<T> source);
     }
 }
