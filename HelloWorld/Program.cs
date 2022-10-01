@@ -14,7 +14,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => 
     {
-        // TODO: Common security configuration for AuthenticationService and HelloWorld
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -22,9 +21,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "http://localhost:62730",
-            ValidAudience = "http://localhost:62730",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MzI831SfbwBflL0SvFuvhy3SMjWEQ4ufzA1fa9eidcFOkZsoQCkHDAWn1mMPAQO3JpJ7gKuyBIhUChO9JXCuirplWzcOPCLi8rCG"))
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
 

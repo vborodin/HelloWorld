@@ -15,7 +15,7 @@ namespace AuthenticationService.Tests
             var filter = new UsernamePasswordFilter("1", "1");
             var result = filter.Apply(source);
             var match = result.Single();
-            Assert.True(match.Username == "1" && match.Password == "1");
+            Assert.True(match.Username == "1" && match.PasswordHash == "1");
         }
 
         [Test]
@@ -53,14 +53,14 @@ namespace AuthenticationService.Tests
         private static IEnumerable<UserModel> CreateTestData()
         {
             return new List<UserModel> {
-                new () { Username = "1", Password = "1" },
-                new () { Username = "1", Password = "2" },
-                new () { Username = "2", Password = "2" },
-                new () { Username = "2", Password = "2" },
-                new () { Username = "John", Password = "2" },
-                new () { Username = null, Password = "1" },
-                new () { Username = "1", Password = null },
-                new () { Username = null, Password = null }
+                new () { Username = "1", PasswordHash = "1" },
+                new () { Username = "1", PasswordHash = "2" },
+                new () { Username = "2", PasswordHash = "2" },
+                new () { Username = "2", PasswordHash = "2" },
+                new () { Username = "John", PasswordHash = "2" },
+                new () { Username = null, PasswordHash = "1" },
+                new () { Username = "1", PasswordHash = null },
+                new () { Username = null, PasswordHash = null }
             };
         }
     }

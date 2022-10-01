@@ -170,7 +170,7 @@ namespace AuthenticationService.Tests
             {
                 Email = "EmailValue",
                 GivenName = "GivenNameValue",
-                Password = "PasswordValue",
+                PasswordHash = "PasswordValue",
                 Role = "RoleValue",
                 Surname = "SurnameValue",
                 Username = "UsernameValue"

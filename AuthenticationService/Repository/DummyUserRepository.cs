@@ -9,7 +9,7 @@ namespace AuthenticationService.Repository
         {
             return new List<UserModel>()
             { 
-                new UserModel() { Email = "dummy", GivenName = "dummy", Password = "dummy", Username = "dummy", Role = "Administrator", Surname = "dummy" }
+                new UserModel() { Email = "dummy", GivenName = "dummy", PasswordHash = "dummy", Username = "dummy", Role = "Administrator", Surname = "dummy" }
             };
         }
     }
