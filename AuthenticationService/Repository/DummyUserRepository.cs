@@ -5,7 +5,7 @@ namespace AuthenticationService.Repository
 {
     public class DummyUserRepository : IUserRepository
     {
-        public IEnumerable<UserModel> Search(IFilter<UserModel> filter)
+        public IEnumerable<UserModel> Get(IFilter<UserModel> filter)
         {
             return new List<UserModel>()
             { 

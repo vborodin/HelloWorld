@@ -5,6 +5,6 @@ namespace AuthenticationService.Repository
 {
     public interface IUserRepository
     {
-        public IEnumerable<UserModel> Search(IFilter<UserModel> filter);
+        public IEnumerable<UserModel> Get(IFilter<UserModel> filter);
     }
 }

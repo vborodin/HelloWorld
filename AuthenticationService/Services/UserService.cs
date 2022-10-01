@@ -17,7 +17,7 @@ namespace AuthenticationService.Services
         {
             VerifyUserLogin(userLogin);
             var filter = new UsernamePasswordFilter(userLogin.Username!, userLogin.Password!);
-            var result = repository.Search(filter);
+            var result = repository.Get(filter);
             return result.FirstOrDefault();
         }
 
