@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  authenticationservice:
+    image: ${DOCKER_REGISTRY-}authenticationservice
+    build:
+      context: .
+      dockerfile: AuthenticationService/Dockerfile
+  helloworld:
+    image: ${DOCKER_REGISTRY-}helloworld
+    build:
+      context: .
+      dockerfile: HelloWorld/Dockerfile
