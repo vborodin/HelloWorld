@@ -8,15 +8,8 @@ namespace HelloWorld.Controllers;
 public class HelloController: ControllerBase
 {
     [HttpGet]
-    public string GetHello()
-    {
-        return "Hello, World!";
-    }
-
-    [HttpGet]
-    [Route("secured")]
     [Authorize]
-    public string GetHelloSecured()
+    public string GetHello()
     {
         return "Hello, World!";
     }
