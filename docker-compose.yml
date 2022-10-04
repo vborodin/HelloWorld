@@ -11,3 +11,11 @@ services:
     build:
       context: .
       dockerfile: HelloWorld/Dockerfile
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: example
+  adminer:
+    image: adminer
+    ports:
+      - "8080"

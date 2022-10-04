@@ -8,7 +8,9 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "authenticationservice": "StartDebugging",
-        "helloworld": "StartDebugging"
+        "helloworld": "StartDebugging",
+        "adminer": "StartWithoutDebugging",
+        "db": "StartWithoutDebugging"
       }
     }
   }
