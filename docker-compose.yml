@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: AuthenticationService/Dockerfile
+    depends_on:
+      - "db"
   helloworld:
     image: ${DOCKER_REGISTRY-}helloworld
     build:
@@ -15,7 +17,9 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: example
+    ports:
+      - 5432
   adminer:
     image: adminer
     ports:
-      - "8080"
+      - 8080

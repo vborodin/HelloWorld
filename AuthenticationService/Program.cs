@@ -7,13 +7,17 @@ using AuthenticationService.TokenGenerator;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:AuthenticationDB"]);
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -36,8 +40,8 @@ builder.Services.AddSingleton<ITokenGenerator<UserModel>>((serviceProvider) =>
         key: config["Jwt:Key"],
         issuer: config["Jwt:issuer"]);
 });
-builder.Services.AddSingleton<IUserService, UserService>();
-builder.Services.AddSingleton<IUserRepository, DummyUserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRepository<UserModel>, UserModelRepository>();
 
 var app = builder.Build();
 

@@ -1,16 +1,23 @@
 {
   "profiles": {
-    "Docker Compose": {
+    "Database": {
       "commandName": "DockerCompose",
-      "composeLaunchAction": "LaunchBrowser",
-      "composeLaunchServiceName": "helloworld",
-      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
       "commandVersion": "1.0",
       "serviceActions": {
-        "authenticationservice": "StartDebugging",
-        "helloworld": "StartDebugging",
         "adminer": "StartWithoutDebugging",
-        "db": "StartWithoutDebugging"
+        "authenticationservice": "DoNotStart",
+        "db": "StartWithoutDebugging",
+        "helloworld": "DoNotStart"
+      }
+    },
+    "Application": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "adminer": "DoNotStart",
+        "authenticationservice": "StartDebugging",
+        "db": "DoNotStart",
+        "helloworld": "StartDebugging"
       }
     }
   }
