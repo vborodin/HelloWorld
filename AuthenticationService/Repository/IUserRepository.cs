@@ -3,7 +3,7 @@ using AuthenticationService.Repository.Model;
 
 namespace AuthenticationService.Repository;
 
-public interface IUserRepository
+public interface IRepository<T>
 {
-    public IEnumerable<UserModel> Get(IFilter<UserModel> filter);
+    public IEnumerable<T> Get(IFilter<T> filter);
 }
