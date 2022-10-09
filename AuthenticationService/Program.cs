@@ -1,19 +1,24 @@
 using System.Text;
 
-using AuthenticationService.Models;
 using AuthenticationService.Repository;
+using AuthenticationService.Repository.Model;
 using AuthenticationService.Services;
 using AuthenticationService.TokenGenerator;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using AuthenticationService.Hashing.HashCalculator;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:AuthenticationDB"]);
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -36,8 +41,18 @@ builder.Services.AddSingleton<ITokenGenerator<UserModel>>((serviceProvider) =>
         key: config["Jwt:Key"],
         issuer: config["Jwt:issuer"]);
 });
-builder.Services.AddSingleton<IUserService, UserService>();
-builder.Services.AddSingleton<IUserRepository, DummyUserRepository>();
+builder.Services.AddSingleton<IHashCalculator<byte[], string>>(_ =>
+{
+    return new SHA256Base64HashCalculator(int.Parse(builder.Configuration["Security:HashIterations"]));
+});
+builder.Services.AddScoped<IRepository<UserModel>, UserModelRepository>();
+builder.Services.AddScoped<IUserService>((serviceProvider) =>
+{
+    return new UserService(
+        serviceProvider.GetRequiredService<IRepository<UserModel>>(),
+        serviceProvider.GetRequiredService<IHashCalculator<byte[], string>>(),
+        builder.Configuration["Security:Pepper"]);
+});
 
 var app = builder.Build();
 

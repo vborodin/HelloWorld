@@ -1,10 +1,9 @@
-﻿using AuthenticationService.Models;
-using AuthenticationService.Repository.Filter;
+﻿using AuthenticationService.Repository.Filter;
+using AuthenticationService.Repository.Model;
 
-namespace AuthenticationService.Repository
+namespace AuthenticationService.Repository;
+
+public interface IRepository<T>
 {
-    public interface IUserRepository
-    {
-        public IEnumerable<UserModel> Get(IFilter<UserModel> filter);
-    }
+    public IEnumerable<T> Get(IFilter<T> filter);
 }

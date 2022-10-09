@@ -1,7 +1,6 @@
-﻿namespace AuthenticationService.TokenGenerator
+﻿namespace AuthenticationService.TokenGenerator;
+
+public interface ITokenGenerator<T>
 {
-    public interface ITokenGenerator<T>
-    {
-        string Generate(T value, string audience, int expirationPeriodMinutes);
-    }
+    string Generate(T value, string audience, int expirationPeriodMinutes);
 }
