@@ -91,7 +91,7 @@ public class UserModelTokenGeneratorTest
     public void ThrowsInvalidOperationExceptionForNullRequiredField()
     {
         var value = CreateTestData();
-        value.Username = null;
+        value.Username = null!;
         Assert.Throws<InvalidOperationException>(() =>
         {
             this.generator.Generate(value, "1", 1);
@@ -105,7 +105,7 @@ public class UserModelTokenGeneratorTest
         });
         value.Surname = "SurnameValue";
 
-        value.Role = null;
+        value.Role = null!;
         Assert.Throws<InvalidOperationException>(() =>
         {
             this.generator.Generate(value, "1", 1);

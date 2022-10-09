@@ -37,7 +37,7 @@ public class UsernameFilterTest
             new() { Username = "" },
             new() { Username = "1" },
             new() { Username = "2" },
-            new() { Username = null }
+            new() { Username = null! }
         };
     }
 }

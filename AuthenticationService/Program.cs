@@ -8,6 +8,7 @@ using AuthenticationService.TokenGenerator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
+using AuthenticationService.Hashing.HashCalculator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,8 +41,18 @@ builder.Services.AddSingleton<ITokenGenerator<UserModel>>((serviceProvider) =>
         key: config["Jwt:Key"],
         issuer: config["Jwt:issuer"]);
 });
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddSingleton<IHashCalculator<byte[], string>>(_ =>
+{
+    return new SHA256Base64HashCalculator(int.Parse(builder.Configuration["Security:HashIterations"]));
+});
 builder.Services.AddScoped<IRepository<UserModel>, UserModelRepository>();
+builder.Services.AddScoped<IUserService>((serviceProvider) =>
+{
+    return new UserService(
+        serviceProvider.GetRequiredService<IRepository<UserModel>>(),
+        serviceProvider.GetRequiredService<IHashCalculator<byte[], string>>(),
+        builder.Configuration["Security:Pepper"]);
+});
 
 var app = builder.Build();
 
