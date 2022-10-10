@@ -1,9 +1,8 @@
-﻿using AuthenticationService.Models;
-using AuthenticationService.Repository.Model;
+﻿using AuthenticationService.Repository.Model;
 
 namespace AuthenticationService.Services;
 
 public interface IUserService
 {
-    UserModel? GetUser(UserLogin userLogin);
+    UserModel? GetUser(string username, string password);
 }

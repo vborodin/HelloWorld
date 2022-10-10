@@ -25,7 +25,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IActionResult Login([FromBody] UserLogin userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
     {
-        var user = this.userService.GetUser(userLogin);
+        var user = this.userService.GetUser(userLogin.Username, userLogin.Password);
         if (user == null)
         {
             return Unauthorized();
