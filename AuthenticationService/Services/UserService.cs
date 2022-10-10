@@ -1,5 +1,6 @@
 ﻿using AuthenticationService.Hashing.HashCalculator;
 using AuthenticationService.Hashing.HashingData;
+using AuthenticationService.Hashing.Salt;
 using AuthenticationService.Repository;
 using AuthenticationService.Repository.Filter;
 using AuthenticationService.Repository.Entities;
@@ -11,18 +12,35 @@ public class UserService : IUserService
 {
     private readonly IRepository<UserEntity> repository;
     private readonly IHashCalculator<byte[], string> hashCalculator;
+    private readonly ISaltGenerator<string> saltGenerator;
     private readonly string pepper;
 
-    public UserService(IRepository<UserEntity> repository, IHashCalculator<byte[], string> hashCalculator, string pepper)
+    public UserService(IRepository<UserEntity> repository, IHashCalculator<byte[], string> hashCalculator, ISaltGenerator<string> saltGenerator, string pepper)
     {
         this.repository = repository;
         this.hashCalculator = hashCalculator;
+        this.saltGenerator = saltGenerator;
         this.pepper = pepper;
     }
 
-    public void CreateUser(UserModel user)
+    public void CreateUser(string username, string password, string? email = null, string? givenName = null, string? surname = null)
     {
-        throw new NotImplementedException();
+        var salt = this.saltGenerator.Generate();
+        var hashingData = new SaltPepperUTF8HashingData(password, salt, this.pepper);
+        var hash = this.hashCalculator.Calculate(hashingData.Data);
+
+        var data = new UserEntity()
+        {
+            Email = email,
+            GivenName = givenName,
+            PasswordHash = hash,
+            Role = "User",
+            Salt = salt,
+            Surname = surname,
+            Username = username
+        };
+
+        this.repository.Create(data);
     }
 
     public UserModel? GetUser(string username, string password)
