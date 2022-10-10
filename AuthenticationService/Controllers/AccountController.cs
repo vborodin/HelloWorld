@@ -1,6 +1,6 @@
-﻿using AuthenticationService.Models;
-using AuthenticationService.Repository.Model;
+﻿using AuthenticationService.Controllers.Dtos;
 using AuthenticationService.Services;
+using AuthenticationService.Services.Model;
 using AuthenticationService.TokenGenerator;
 
 using Microsoft.AspNetCore.Mvc;

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AuthenticationService.Repository.Model;
+namespace AuthenticationService.Repository.Entities;
 
-public class UserModel
+public class UserEntity
 {
     public long Id { get; set; }
     [Required]

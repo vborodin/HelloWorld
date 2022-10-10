@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 
-using AuthenticationService.Repository.Model;
+using AuthenticationService.Services.Model;
 
 using Microsoft.IdentityModel.Tokens;
 

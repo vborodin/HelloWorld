@@ -2,7 +2,7 @@
 
 using AuthenticationService.Repository;
 using AuthenticationService.Repository.Filter;
-using AuthenticationService.Repository.Model;
+using AuthenticationService.Repository.Entities;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -15,16 +15,16 @@ namespace AuthenticationService.Tests.Repository;
 public class UserModelRepositoryTest
 {
     private UserModelRepository repository = null!;
-    private Mock<IFilter<UserModel>> filterMock = null!;
-    private List<UserModel> data = null!;
-    private Mock<DbSet<UserModel>> dbSetMock = null!;
+    private Mock<IFilter<UserEntity>> filterMock = null!;
+    private List<UserEntity> data = null!;
+    private Mock<DbSet<UserEntity>> dbSetMock = null!;
     private Mock<UserModelContext> contextMock = null!;
 
     [SetUp]
     public void Setup()
     {
         this.filterMock = CreateFilterMock();
-        this.data = new List<UserModel>();
+        this.data = new List<UserEntity>();
         this.dbSetMock = CreateDbSetMock();
         this.contextMock = CreateDataContextMock(this.dbSetMock.Object);
         this.repository = new UserModelRepository(this.contextMock.Object);
@@ -41,7 +41,7 @@ public class UserModelRepositoryTest
     [Test]
     public void CreatesData()
     {
-        var data = new UserModel()
+        var data = new UserEntity()
         {
             Id = 0,
             Username = "username",
@@ -67,31 +67,31 @@ public class UserModelRepositoryTest
         this.contextMock.Verify(context => context.SaveChanges(), Times.Once);
     }
 
-    private static Mock<IFilter<UserModel>> CreateFilterMock()
+    private static Mock<IFilter<UserEntity>> CreateFilterMock()
     {
-        var mock = new Mock<IFilter<UserModel>>();
+        var mock = new Mock<IFilter<UserEntity>>();
         mock.Setup(mock => mock
-            .Apply(It.IsAny<IEnumerable<UserModel>>()))
-            .Returns((IEnumerable<UserModel> e) => e);
+            .Apply(It.IsAny<IEnumerable<UserEntity>>()))
+            .Returns((IEnumerable<UserEntity> e) => e);
         return mock;
     }
 
-    private static Mock<UserModelContext> CreateDataContextMock(DbSet<UserModel> dbSet)
+    private static Mock<UserModelContext> CreateDataContextMock(DbSet<UserEntity> dbSet)
     {
         var mock = new Mock<UserModelContext>();
         mock.Setup(m => m.Users).Returns(dbSet);
         return mock;
     }
 
-    private Mock<DbSet<UserModel>> CreateDbSetMock()
+    private Mock<DbSet<UserEntity>> CreateDbSetMock()
     {
         var queryable = this.data.AsQueryable();
-        var mock = new Mock<DbSet<UserModel>>();
-        mock.As<IQueryable<UserModel>>().Setup(m => m.Provider).Returns(queryable.Provider);
-        mock.As<IQueryable<UserModel>>().Setup(m => m.Expression).Returns(queryable.Expression);
-        mock.As<IQueryable<UserModel>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
-        mock.As<IQueryable<UserModel>>().Setup(m => m.GetEnumerator()).Returns(() => queryable.GetEnumerator());
-        mock.Setup(m => m.Add(It.IsAny<UserModel>())).Callback<UserModel>(s => this.data.Add(s));
+        var mock = new Mock<DbSet<UserEntity>>();
+        mock.As<IQueryable<UserEntity>>().Setup(m => m.Provider).Returns(queryable.Provider);
+        mock.As<IQueryable<UserEntity>>().Setup(m => m.Expression).Returns(queryable.Expression);
+        mock.As<IQueryable<UserEntity>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+        mock.As<IQueryable<UserEntity>>().Setup(m => m.GetEnumerator()).Returns(() => queryable.GetEnumerator());
+        mock.Setup(m => m.Add(It.IsAny<UserEntity>())).Callback<UserEntity>(s => this.data.Add(s));
         return mock;
     }
 }

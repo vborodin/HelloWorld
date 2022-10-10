@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 
-using AuthenticationService.Repository.Model;
+using AuthenticationService.Services.Model;
 using AuthenticationService.TokenGenerator;
 
 using Microsoft.IdentityModel.Tokens;
@@ -90,39 +90,30 @@ public class UserModelTokenGeneratorTest
     [Test]
     public void ThrowsInvalidOperationExceptionForNullRequiredField()
     {
-        var value = CreateTestData();
-        value.Username = null!;
+        var validValue = CreateTestData();
         Assert.Throws<InvalidOperationException>(() =>
         {
-            this.generator.Generate(value, "1", 1);
+            this.generator.Generate(validValue with { Username = null! }, "1", 1);
         });
-        value.Username = "UsernameValue";
 
-        value.Surname = null;
         Assert.Throws<InvalidOperationException>(() =>
         {
-            this.generator.Generate(value, "1", 1);
+            this.generator.Generate(validValue with { Surname = null! }, "1", 1);
         });
-        value.Surname = "SurnameValue";
 
-        value.Role = null!;
         Assert.Throws<InvalidOperationException>(() =>
         {
-            this.generator.Generate(value, "1", 1);
+            this.generator.Generate(validValue with { Role = null! }, "1", 1);
         });
-        value.Role = "RoleValue";
 
-        value.GivenName = null;
         Assert.Throws<InvalidOperationException>(() =>
         {
-            this.generator.Generate(value, "1", 1);
+            this.generator.Generate(validValue with { GivenName = null! }, "1", 1);
         });
-        value.GivenName = "GivenNameValue";
 
-        value.Email = null;
         Assert.Throws<InvalidOperationException>(() =>
         {
-            this.generator.Generate(value, "1", 1);
+            this.generator.Generate(validValue with { Email = null! }, "1", 1);
         });
     }
 
@@ -162,15 +153,13 @@ public class UserModelTokenGeneratorTest
 
     private UserModel CreateTestData()
     {
-        return new UserModel()
-        {
-            Email = "EmailValue",
-            GivenName = "GivenNameValue",
-            PasswordHash = "PasswordValue",
-            Role = "RoleValue",
-            Surname = "SurnameValue",
-            Username = "UsernameValue"
-        };
+        return new UserModel(
+            Email: "EmailValue",
+            GivenName: "GivenNameValue",
+            Role: "RoleValue",
+            Surname: "SurnameValue",
+            Username: "UsernameValue"
+        );
     }
 
     private JwtSecurityToken CreateDecodedToken(UserModel value, string audience, int expirationPeriodMinutes)

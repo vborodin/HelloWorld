@@ -1,8 +1,8 @@
-﻿using AuthenticationService.Repository.Model;
+﻿using AuthenticationService.Repository.Entities;
 
 namespace AuthenticationService.Repository.Filter;
 
-public class UsernameFilter : IFilter<UserModel>
+public class UsernameFilter : IFilter<UserEntity>
 {
     private readonly string username;
 
@@ -11,7 +11,7 @@ public class UsernameFilter : IFilter<UserModel>
         this.username = username;
     }
 
-    public IEnumerable<UserModel> Apply(IEnumerable<UserModel> source)
+    public IEnumerable<UserEntity> Apply(IEnumerable<UserEntity> source)
     {
         return source.Where(x => x.Username == this.username);
     }
