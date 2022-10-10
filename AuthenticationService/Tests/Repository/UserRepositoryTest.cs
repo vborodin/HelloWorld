@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-
-using AuthenticationService.Repository;
+﻿using AuthenticationService.Repository;
 using AuthenticationService.Repository.Filter;
 using AuthenticationService.Repository.Entities;
 
@@ -12,9 +10,9 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Repository;
 
-public class UserModelRepositoryTest
+public class UserRepositoryTest
 {
-    private UserModelRepository repository = null!;
+    private UserRepository repository = null!;
     private Mock<IFilter<UserEntity>> filterMock = null!;
     private List<UserEntity> data = null!;
     private Mock<DbSet<UserEntity>> dbSetMock = null!;
@@ -27,7 +25,7 @@ public class UserModelRepositoryTest
         this.data = new List<UserEntity>();
         this.dbSetMock = CreateDbSetMock();
         this.contextMock = CreateDataContextMock(this.dbSetMock.Object);
-        this.repository = new UserModelRepository(this.contextMock.Object);
+        this.repository = new UserRepository(this.contextMock.Object);
     }
 
     [Test]

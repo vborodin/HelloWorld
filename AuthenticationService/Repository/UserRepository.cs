@@ -3,11 +3,11 @@ using AuthenticationService.Repository.Entities;
 
 namespace AuthenticationService.Repository;
 
-public class UserModelRepository : IRepository<UserEntity>
+public class UserRepository : IRepository<UserEntity>
 {
     private readonly UserModelContext context;
 
-    public UserModelRepository(UserModelContext context)
+    public UserRepository(UserModelContext context)
     {
         this.context = context;
     }
