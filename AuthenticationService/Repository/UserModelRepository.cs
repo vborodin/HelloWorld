@@ -5,11 +5,17 @@ namespace AuthenticationService.Repository;
 
 public class UserModelRepository : IRepository<UserModel>
 {
-    private readonly DataContext context;
+    private readonly UserModelContext context;
 
-    public UserModelRepository(DataContext context)
+    public UserModelRepository(UserModelContext context)
     {
         this.context = context;
+    }
+
+    public void Create(UserModel data)
+    {
+        this.context.Users.Add(data);
+        this.context.SaveChanges();
     }
 
     public IEnumerable<UserModel> Get(IFilter<UserModel> filter)
