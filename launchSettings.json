@@ -12,6 +12,9 @@
     },
     "Application": {
       "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "authenticationservice",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
       "commandVersion": "1.0",
       "serviceActions": {
         "adminer": "DoNotStart",

@@ -1,21 +1,23 @@
 using System.Text;
 
+using AuthenticationService.Hashing.HashCalculator;
+using AuthenticationService.Hashing.Salt;
 using AuthenticationService.Repository;
-using AuthenticationService.Repository.Model;
+using AuthenticationService.Repository.Entities;
 using AuthenticationService.Services;
+using AuthenticationService.Services.Model;
 using AuthenticationService.TokenGenerator;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
-using AuthenticationService.Hashing.HashCalculator;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<DataContext>(options =>
+builder.Services.AddDbContext<UserModelContext>(options =>
 {
     options.UseNpgsql(builder.Configuration["ConnectionStrings:AuthenticationDB"]);
 });
@@ -45,12 +47,17 @@ builder.Services.AddSingleton<IHashCalculator<byte[], string>>(_ =>
 {
     return new SHA256Base64HashCalculator(int.Parse(builder.Configuration["Security:HashIterations"]));
 });
-builder.Services.AddScoped<IRepository<UserModel>, UserModelRepository>();
+builder.Services.AddSingleton<ISaltGenerator<string>>(_ =>
+{
+    return new Base64StringSaltGenerator(int.Parse(builder.Configuration["Security:SaltLength"]));
+});
+builder.Services.AddScoped<IRepository<UserEntity>, UserRepository>();
 builder.Services.AddScoped<IUserService>((serviceProvider) =>
 {
     return new UserService(
-        serviceProvider.GetRequiredService<IRepository<UserModel>>(),
+        serviceProvider.GetRequiredService<IRepository<UserEntity>>(),
         serviceProvider.GetRequiredService<IHashCalculator<byte[], string>>(),
+        serviceProvider.GetRequiredService<ISaltGenerator<string>>(),
         builder.Configuration["Security:Pepper"]);
 });
 

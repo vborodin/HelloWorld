@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 
-using AuthenticationService.Repository.Model;
+using AuthenticationService.Services.Model;
 using AuthenticationService.TokenGenerator;
 
 using Microsoft.IdentityModel.Tokens;
@@ -78,99 +78,15 @@ public class UserModelTokenGeneratorTest
         Assert.NotNull(claimsPrincipal);
     }
 
-    [Test]
-    public void ThrowsArgumentNullExceptionForNullValue()
-    {
-        Assert.Throws<ArgumentNullException>(() =>
-        {
-            this.generator.Generate(null!, "1", 1);
-        });
-    }
-
-    [Test]
-    public void ThrowsInvalidOperationExceptionForNullRequiredField()
-    {
-        var value = CreateTestData();
-        value.Username = null!;
-        Assert.Throws<InvalidOperationException>(() =>
-        {
-            this.generator.Generate(value, "1", 1);
-        });
-        value.Username = "UsernameValue";
-
-        value.Surname = null;
-        Assert.Throws<InvalidOperationException>(() =>
-        {
-            this.generator.Generate(value, "1", 1);
-        });
-        value.Surname = "SurnameValue";
-
-        value.Role = null!;
-        Assert.Throws<InvalidOperationException>(() =>
-        {
-            this.generator.Generate(value, "1", 1);
-        });
-        value.Role = "RoleValue";
-
-        value.GivenName = null;
-        Assert.Throws<InvalidOperationException>(() =>
-        {
-            this.generator.Generate(value, "1", 1);
-        });
-        value.GivenName = "GivenNameValue";
-
-        value.Email = null;
-        Assert.Throws<InvalidOperationException>(() =>
-        {
-            this.generator.Generate(value, "1", 1);
-        });
-    }
-
-    [Test]
-    public void ThrowsArgumentOutOfRangeExceptionForNonPositiveExpirationPeriod()
-    {
-        var value = CreateTestData();
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            this.generator.Generate(value, "1", 0);
-        });
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            this.generator.Generate(value, "1", -1);
-        });
-    }
-
-    [Test]
-    public void ThrowsInvalidOperationExceptionForEmptyAudience()
-    {
-        var value = CreateTestData();
-        Assert.Throws<InvalidOperationException>(() =>
-        {
-            this.generator.Generate(value, "", 1);
-        });
-    }
-
-    [Test]
-    public void ThrowsArgumentNullExceptionForNullAudience()
-    {
-        var value = CreateTestData();
-        Assert.Throws<ArgumentNullException>(() =>
-        {
-            this.generator.Generate(value, null!, 1);
-        });
-    }
-
     private UserModel CreateTestData()
     {
-        return new UserModel()
-        {
-            Email = "EmailValue",
-            GivenName = "GivenNameValue",
-            PasswordHash = "PasswordValue",
-            Role = "RoleValue",
-            Surname = "SurnameValue",
-            Username = "UsernameValue"
-        };
+        return new UserModel(
+            Email: "EmailValue",
+            GivenName: "GivenNameValue",
+            Role: "RoleValue",
+            Surname: "SurnameValue",
+            Username: "UsernameValue"
+        );
     }
 
     private JwtSecurityToken CreateDecodedToken(UserModel value, string audience, int expirationPeriodMinutes)

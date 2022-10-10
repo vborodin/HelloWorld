@@ -1,5 +1,5 @@
 ﻿using AuthenticationService.Repository.Filter;
-using AuthenticationService.Repository.Model;
+using AuthenticationService.Repository.Entities;
 
 using NUnit.Framework;
 
@@ -29,9 +29,9 @@ public class UsernameFilterTest
         Assert.AreEqual(2, result.Count());
     }
 
-    private IEnumerable<UserModel> CreateTestData()
+    private IEnumerable<UserEntity> CreateTestData()
     {
-        return new List<UserModel>
+        return new List<UserEntity>
         {
             new() { Username = "1" },
             new() { Username = "" },

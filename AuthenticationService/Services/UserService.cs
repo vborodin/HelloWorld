@@ -1,33 +1,60 @@
 ﻿using AuthenticationService.Hashing.HashCalculator;
 using AuthenticationService.Hashing.HashingData;
-using AuthenticationService.Models;
+using AuthenticationService.Hashing.Salt;
 using AuthenticationService.Repository;
 using AuthenticationService.Repository.Filter;
-using AuthenticationService.Repository.Model;
+using AuthenticationService.Repository.Entities;
+using AuthenticationService.Services.Model;
 
 namespace AuthenticationService.Services;
 
 public class UserService : IUserService
 {
-    private readonly IRepository<UserModel> repository;
+    private readonly IRepository<UserEntity> repository;
     private readonly IHashCalculator<byte[], string> hashCalculator;
+    private readonly ISaltGenerator<string> saltGenerator;
     private readonly string pepper;
 
-    public UserService(IRepository<UserModel> repository, IHashCalculator<byte[], string> hashCalculator, string pepper)
+    public UserService(IRepository<UserEntity> repository, IHashCalculator<byte[], string> hashCalculator, ISaltGenerator<string> saltGenerator, string pepper)
     {
         this.repository = repository;
         this.hashCalculator = hashCalculator;
+        this.saltGenerator = saltGenerator;
         this.pepper = pepper;
     }
 
-    public UserModel? GetUser(UserLogin userLogin)
+    public void CreateUser(string username, string password, string? email = null, string? givenName = null, string? surname = null)
     {
-        VerifyUserLogin(userLogin);
-        var filter = new UsernameFilter(userLogin.Username);
-        var user = this.repository.Get(filter).FirstOrDefault();
-        if (user != null && IsPasswordValid(userLogin.Password, user.PasswordHash, user.Salt))
+        var salt = this.saltGenerator.Generate();
+        var hashingData = new SaltPepperUTF8HashingData(password, salt, this.pepper);
+        var hash = this.hashCalculator.Calculate(hashingData.Data);
+
+        var data = new UserEntity()
         {
-            return user;
+            Email = email,
+            GivenName = givenName,
+            PasswordHash = hash,
+            Role = "User",
+            Salt = salt,
+            Surname = surname,
+            Username = username
+        };
+
+        this.repository.Create(data);
+    }
+
+    public UserModel? GetUser(string username, string password)
+    {
+        var filter = new UsernameFilter(username);
+        var userEntity = this.repository.Get(filter).FirstOrDefault();
+        if (userEntity != null && IsPasswordValid(password, userEntity.PasswordHash, userEntity.Salt))
+        {
+            return new UserModel(
+                Username: userEntity.Username,
+                Email: userEntity.Email,
+                Role: userEntity.Role,
+                Surname: userEntity.Surname,
+                GivenName: userEntity.GivenName);
         }
         return null;
     }
@@ -37,16 +64,5 @@ public class UserService : IUserService
         var hashingData = new SaltPepperUTF8HashingData(password, salt, this.pepper);
         var hash = this.hashCalculator.Calculate(hashingData.Data);
         return hash == passwordHash;
-    }
-
-    private void VerifyUserLogin(UserLogin value)
-    {
-        _ = value switch
-        {
-            null => throw new ArgumentNullException(nameof(value)),
-            { Username: var u } when u == null => throw new InvalidOperationException($"Required field {nameof(UserLogin.Username)} of {nameof(UserLogin)} is null"),
-            { Password: var p } when p == null => throw new InvalidOperationException($"Required field {nameof(UserLogin.Password)} of {nameof(UserLogin)} is null"),
-            _ => value
-        };
     }
 }

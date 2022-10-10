@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AuthenticationService.Migrations
 {
-    [DbContext(typeof(DataContext))]
+    [DbContext(typeof(UserModelContext))]
     [Migration("20221004071849_CreateInitial")]
     partial class CreateInitial
     {
