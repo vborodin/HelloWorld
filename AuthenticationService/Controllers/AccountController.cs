@@ -23,8 +23,16 @@ public class AccountController : ControllerBase
     [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IActionResult Login([FromBody] UserLogin userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
+    public IActionResult Login([FromBody] UserLoginDto userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
     {
+        if (!IsAudienceValid(audience))
+        {
+            return BadRequest($"{nameof(audience)} must not be empty");
+        }
+        if (!IsExpiratonPeriodValid(expirationPeriodMinutes))
+        {
+            return BadRequest($"{nameof(expirationPeriodMinutes)} must be positive");
+        }
         var user = this.userService.GetUser(userLogin.Username, userLogin.Password);
         if (user == null)
         {
@@ -32,5 +40,28 @@ public class AccountController : ControllerBase
         }
         var token = this.tokenGenerator.Generate(user, audience, expirationPeriodMinutes);
         return Ok(token);
+    }
+
+    [HttpPost("Register")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult Register([FromBody] UserRegistrationDto userRegistrationDto)
+    {
+        this.userService.CreateUser(
+            username: userRegistrationDto.Username,
+            password: userRegistrationDto.Password,
+            email: userRegistrationDto.Email,
+            givenName: userRegistrationDto.GivenName,
+            surname: userRegistrationDto.Surname);
+        return Ok();
+    }
+
+    private bool IsExpiratonPeriodValid(int expirationPeriodMinutes)
+    {
+        return expirationPeriodMinutes > 0;
+    }
+
+    private bool IsAudienceValid(string audience)
+    {
+        return !string.IsNullOrEmpty(audience);
     }
 }
