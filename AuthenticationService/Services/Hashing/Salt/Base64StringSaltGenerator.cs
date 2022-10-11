@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace AuthenticationService.Hashing.Salt;
+namespace AuthenticationService.Services.Hashing.Salt;
 
 public class Base64StringSaltGenerator : ISaltGenerator<string>, IDisposable
 {

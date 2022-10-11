@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace AuthenticationService.Hashing.HashingData;
+namespace AuthenticationService.Services.Hashing.HashingData;
 
 public class SaltPepperUTF8HashingData : IHashingData<byte[]>
 {

@@ -1,4 +1,4 @@
-﻿namespace AuthenticationService.Hashing.Salt;
+﻿namespace AuthenticationService.Services.Hashing.Salt;
 
 public interface ISaltGenerator<T>
 {

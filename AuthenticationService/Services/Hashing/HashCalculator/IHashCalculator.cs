@@ -1,4 +1,4 @@
-﻿namespace AuthenticationService.Hashing.HashCalculator;
+﻿namespace AuthenticationService.Services.Hashing.HashCalculator;
 
 public interface IHashCalculator<TInput, TOutput>
 {

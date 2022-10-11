@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace AuthenticationService.Hashing.HashCalculator;
+namespace AuthenticationService.Services.Hashing.HashCalculator;
 
 public class SHA256Base64HashCalculator : IHashCalculator<byte[], string>, IDisposable
 {
