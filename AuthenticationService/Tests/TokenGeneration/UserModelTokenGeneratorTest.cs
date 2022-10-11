@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 
 using AuthenticationService.Services.Model;
-using AuthenticationService.TokenGenerator;
+using AuthenticationService.Services.TokenGenerator;
 
 using Microsoft.IdentityModel.Tokens;
 

@@ -6,7 +6,7 @@ using AuthenticationService.Services.Model;
 
 using Microsoft.IdentityModel.Tokens;
 
-namespace AuthenticationService.TokenGenerator;
+namespace AuthenticationService.Services.TokenGenerator;
 
 public class UserModelTokenGenerator : ITokenGenerator<UserModel>
 {

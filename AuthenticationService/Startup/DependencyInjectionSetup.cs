@@ -4,7 +4,7 @@ using AuthenticationService.Services;
 using AuthenticationService.Services.Hashing.HashCalculator;
 using AuthenticationService.Services.Hashing.Salt;
 using AuthenticationService.Services.Model;
-using AuthenticationService.TokenGenerator;
+using AuthenticationService.Services.TokenGenerator;
 
 namespace AuthenticationService.Startup;
 

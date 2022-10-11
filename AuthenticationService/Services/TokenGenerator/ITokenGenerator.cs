@@ -1,4 +1,4 @@
-﻿namespace AuthenticationService.TokenGenerator;
+﻿namespace AuthenticationService.Services.TokenGenerator;
 
 public interface ITokenGenerator<T>
 {
