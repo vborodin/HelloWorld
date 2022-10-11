@@ -1,9 +1,9 @@
-﻿using AuthenticationService.Hashing.HashCalculator;
-using AuthenticationService.Hashing.HashingData;
-using AuthenticationService.Hashing.Salt;
-using AuthenticationService.Repository;
-using AuthenticationService.Repository.Filter;
+﻿using AuthenticationService.Repository;
 using AuthenticationService.Repository.Entities;
+using AuthenticationService.Repository.Filter;
+using AuthenticationService.Services.Hashing.HashCalculator;
+using AuthenticationService.Services.Hashing.HashingData;
+using AuthenticationService.Services.Hashing.Salt;
 using AuthenticationService.Services.Model;
 
 namespace AuthenticationService.Services;

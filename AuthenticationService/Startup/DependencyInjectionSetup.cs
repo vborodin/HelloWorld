@@ -1,8 +1,8 @@
-﻿using AuthenticationService.Hashing.HashCalculator;
-using AuthenticationService.Hashing.Salt;
+﻿using AuthenticationService.Repository;
 using AuthenticationService.Repository.Entities;
-using AuthenticationService.Repository;
 using AuthenticationService.Services;
+using AuthenticationService.Services.Hashing.HashCalculator;
+using AuthenticationService.Services.Hashing.Salt;
 using AuthenticationService.Services.Model;
 using AuthenticationService.TokenGenerator;
 
