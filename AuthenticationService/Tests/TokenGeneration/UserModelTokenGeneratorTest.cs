@@ -18,6 +18,12 @@ public class UserModelTokenGeneratorTest
     private readonly ITokenGenerator<UserModel> generator = new UserModelTokenGenerator(securityKey, issuer);
 
     [Test]
+    public void BrokenTest()
+    {
+        Assert.Fail();
+    }
+
+    [Test]
     public void GeneratesValidHeader()
     {
         var value = CreateTestData();
