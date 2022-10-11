@@ -1,4 +1,4 @@
-﻿using AuthenticationService.Hashing.HashCalculator;
+﻿using AuthenticationService.Services.Hashing.HashCalculator;
 
 using NUnit.Framework;
 

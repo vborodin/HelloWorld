@@ -1,4 +1,4 @@
-﻿using AuthenticationService.Hashing.Salt;
+﻿using AuthenticationService.Services.Hashing.Salt;
 
 using NUnit.Framework;
 

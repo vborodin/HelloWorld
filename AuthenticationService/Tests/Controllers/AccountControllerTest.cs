@@ -2,7 +2,7 @@
 using AuthenticationService.Controllers.Dtos;
 using AuthenticationService.Services;
 using AuthenticationService.Services.Model;
-using AuthenticationService.TokenGenerator;
+using AuthenticationService.Services.TokenGenerator;
 
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,12 +1,11 @@
 ﻿using System.Text;
 
-using AuthenticationService.Hashing.HashCalculator;
-using AuthenticationService.Hashing.Salt;
 using AuthenticationService.Repository;
 using AuthenticationService.Repository.Entities;
 using AuthenticationService.Repository.Filter;
 using AuthenticationService.Services;
-using AuthenticationService.Services.Model;
+using AuthenticationService.Services.Hashing.HashCalculator;
+using AuthenticationService.Services.Hashing.Salt;
 
 using Moq;
 

@@ -1,4 +1,4 @@
-﻿namespace AuthenticationService.Hashing.HashingData;
+﻿namespace AuthenticationService.Services.Hashing.HashingData;
 
 public interface IHashingData<T>
 {
