@@ -23,7 +23,7 @@ public class UserService : IUserService
         this.pepper = pepper;
     }
 
-    public void CreateUser(string username, string password, string? email = null, string? givenName = null, string? surname = null)
+    public async Task CreateUserAsync(string username, string password, string? email = null, string? givenName = null, string? surname = null)
     {
         var salt = this.saltGenerator.Generate();
         var hashingData = new SaltPepperUTF8HashingData(password, salt, this.pepper);
@@ -40,13 +40,13 @@ public class UserService : IUserService
             Username = username
         };
 
-        this.repository.Create(data);
+        await this.repository.CreateAsync(data);
     }
 
-    public UserModel? GetUser(string username, string password)
+    public async Task<UserModel?> GetUserAsync(string username, string password)
     {
         var filter = new UsernameFilter(username);
-        var userEntity = this.repository.Get(filter).FirstOrDefault();
+        var userEntity = await this.repository.GetAsync(filter).FirstOrDefaultAsync();
         if (userEntity != null && IsPasswordValid(password, userEntity.PasswordHash, userEntity.Salt))
         {
             return new UserModel(

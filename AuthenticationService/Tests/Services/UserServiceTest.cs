@@ -38,9 +38,9 @@ public class UserServiceTest
     }
 
     [Test]
-    public void ReturnsUserByUsernameAndPassword()
+    public async Task ReturnsUserByUsernameAndPassword()
     {
-        var result = this.service.GetUser("TestUsername", "TestPassword");
+        var result = await this.service.GetUserAsync("TestUsername", "TestPassword");
 
         Assert.AreEqual("TestUsername", result!.Username);
         Assert.AreEqual("TestEmail", result!.Email);
@@ -50,35 +50,35 @@ public class UserServiceTest
     }
 
     [Test]
-    public void ReturnsNullForInvalidUsername()
+    public async Task ReturnsNullForInvalidUsername()
     {
-        var result = this.service.GetUser("InvalidUsername", "TestPassword");
+        var result = await this.service.GetUserAsync("InvalidUsername", "TestPassword");
 
         Assert.IsNull(result);
     }
 
     [Test]
-    public void ReturnsNullForInvalidPassword()
+    public async Task ReturnsNullForInvalidPassword()
     {
-        var result = this.service.GetUser("TestUsername", "InvalidPassword");
+        var result = await this.service.GetUserAsync("TestUsername", "InvalidPassword");
 
         Assert.IsNull(result);
     }
 
     [Test]
-    public void CreatesUserFromUserModelAndPassword()
+    public async Task CreatesUserFromUserModelAndPassword()
     {
-        var before = this.service.GetUser("NewUsername", "NewPassword");
+        var before = await this.service.GetUserAsync("NewUsername", "NewPassword");
         Assert.IsNull(before);
 
-        this.service.CreateUser(
+        await this.service.CreateUserAsync(
             username: "NewUsername",
             password: "NewPassword",
             email: "NewEmail",
             givenName: "NewGivenName",
             surname: "NewSurname");
 
-        var result = this.service.GetUser("NewUsername", "NewPassword");
+        var result = await this.service.GetUserAsync("NewUsername", "NewPassword");
 
         Assert.AreEqual("NewUsername", result!.Username);
         Assert.AreEqual("User", result!.Role);
@@ -105,11 +105,19 @@ public class UserServiceTest
     private Mock<IRepository<UserEntity>> CreateRepositoryMock()
     {
         var mock = new Mock<IRepository<UserEntity>>();
-        mock.Setup(m => m.Get(It.IsAny<IFilter<UserEntity>>()))
-            .Returns((IFilter<UserEntity> filter) => filter.Apply(this.data));
-        mock.Setup(m => m.Create(It.IsAny<UserEntity>()))
+        mock.Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
+            .Returns((IFilter<UserEntity> filter) => ToAsyncEnumerable(filter.Apply(this.data.AsQueryable())));
+        mock.Setup(m => m.CreateAsync(It.IsAny<UserEntity>()))
             .Callback<UserEntity>(e => this.data.Add(e));
         return mock;
+    }
+
+    private async IAsyncEnumerable<T> ToAsyncEnumerable<T>(IEnumerable<T> source)
+    {
+        foreach (var item in source)
+        {
+            yield return await Task.FromResult(item);
+        }
     }
 
     private List<UserEntity> CreateTestData()

@@ -11,7 +11,7 @@ public class UsernameFilter : IFilter<UserEntity>
         this.username = username;
     }
 
-    public IEnumerable<UserEntity> Apply(IEnumerable<UserEntity> source)
+    public IQueryable<UserEntity> Apply(IQueryable<UserEntity> source)
     {
         return source.Where(x => x.Username == this.username);
     }

@@ -23,7 +23,7 @@ public class AccountController : ControllerBase
     [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IActionResult Login([FromBody] UserLoginDto userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
+    public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
     {
         if (!IsAudienceValid(audience))
         {
@@ -33,7 +33,7 @@ public class AccountController : ControllerBase
         {
             return BadRequest($"{nameof(expirationPeriodMinutes)} must be positive");
         }
-        var user = this.userService.GetUser(userLogin.Username, userLogin.Password);
+        var user = await this.userService.GetUserAsync(userLogin.Username, userLogin.Password);
         if (user == null)
         {
             return Unauthorized();
@@ -44,9 +44,9 @@ public class AccountController : ControllerBase
 
     [HttpPost("Register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult Register([FromBody] UserRegistrationDto userRegistrationDto)
+    public async Task<ActionResult> Register([FromBody] UserRegistrationDto userRegistrationDto)
     {
-        this.userService.CreateUser(
+        await this.userService.CreateUserAsync(
             username: userRegistrationDto.Username,
             password: userRegistrationDto.Password,
             email: userRegistrationDto.Email,

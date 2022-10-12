@@ -29,7 +29,7 @@ public class UsernameFilterTest
         Assert.AreEqual(2, result.Count());
     }
 
-    private IEnumerable<UserEntity> CreateTestData()
+    private IQueryable<UserEntity> CreateTestData()
     {
         return new List<UserEntity>
         {
@@ -38,6 +38,6 @@ public class UsernameFilterTest
             new() { Username = "1" },
             new() { Username = "2" },
             new() { Username = null! }
-        };
+        }.AsQueryable();
     }
 }

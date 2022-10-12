@@ -4,7 +4,7 @@ namespace AuthenticationService.Repository;
 
 public interface IRepository<T>
 {
-    public IEnumerable<T> Get(IFilter<T> filter);
+    public IAsyncEnumerable<T> GetAsync(IFilter<T> filter);
 
-    public void Create(T data);
+    public Task CreateAsync(T data);
 }
