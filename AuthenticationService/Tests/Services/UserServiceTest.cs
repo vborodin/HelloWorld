@@ -1,11 +1,12 @@
 ﻿using System.Text;
 
+using AuthenticationService.Hashing.HashCalculator;
+using AuthenticationService.Hashing.Salt;
 using AuthenticationService.Repository;
 using AuthenticationService.Repository.Entities;
 using AuthenticationService.Repository.Filter;
 using AuthenticationService.Services;
-using AuthenticationService.Services.Hashing.HashCalculator;
-using AuthenticationService.Services.Hashing.Salt;
+using AuthenticationService.Services.Model;
 
 using Moq;
 
@@ -105,9 +106,9 @@ public class UserServiceTest
     private Mock<IRepository<UserEntity>> CreateRepositoryMock()
     {
         var mock = new Mock<IRepository<UserEntity>>();
-        mock.Setup(m => m.Get(It.IsAny<IFilter<UserEntity>>()))
+        mock.Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
             .Returns((IFilter<UserEntity> filter) => filter.Apply(this.data));
-        mock.Setup(m => m.Create(It.IsAny<UserEntity>()))
+        mock.Setup(m => m.CreateAsync(It.IsAny<UserEntity>()))
             .Callback<UserEntity>(e => this.data.Add(e));
         return mock;
     }

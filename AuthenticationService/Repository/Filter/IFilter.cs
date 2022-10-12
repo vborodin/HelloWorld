@@ -2,5 +2,5 @@
 
 public interface IFilter<T>
 {
-    public IEnumerable<T> Apply(IEnumerable<T> source);
+    public IQueryable<T> Apply(IQueryable<T> source);
 }

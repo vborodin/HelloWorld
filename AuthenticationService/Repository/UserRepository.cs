@@ -1,5 +1,7 @@
-﻿using AuthenticationService.Repository.Filter;
-using AuthenticationService.Repository.Entities;
+﻿using AuthenticationService.Repository.Entities;
+using AuthenticationService.Repository.Filter;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthenticationService.Repository;
 
@@ -12,14 +14,14 @@ public class UserRepository : IRepository<UserEntity>
         this.context = context;
     }
 
-    public void Create(UserEntity data)
+    public async Task CreateAsync(UserEntity data)
     {
-        this.context.Users.Add(data);
-        this.context.SaveChanges();
+        await this.context.Users.AddAsync(data);
+        await this.context.SaveChangesAsync();
     }
 
-    public IEnumerable<UserEntity> Get(IFilter<UserEntity> filter)
+    public IAsyncEnumerable<UserEntity> GetAsync(IFilter<UserEntity> filter)
     {
-        return filter.Apply(this.context.Users);
+        return filter.Apply(this.context.Users).AsAsyncEnumerable();
     }
 }

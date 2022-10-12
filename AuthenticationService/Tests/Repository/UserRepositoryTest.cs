@@ -31,7 +31,7 @@ public class UserRepositoryTest
     [Test]
     public void AppliesFilterWhenGetsData()
     {
-        var result = this.repository.Get(this.filterMock.Object);
+        var result = this.repository.GetAsync(this.filterMock.Object);
 
         this.filterMock.Verify(filter => filter.Apply(result), Times.Once);
     }
@@ -51,9 +51,9 @@ public class UserRepositoryTest
             Surname = "surname"
         };
         
-        this.repository.Create(data);
+        this.repository.CreateAsync(data);
 
-        var createdData = this.repository.Get(this.filterMock.Object).Single();
+        var createdData = this.repository.GetAsync(this.filterMock.Object).Single();
         Assert.AreEqual(data.Id, createdData.Id);
         Assert.AreEqual(data.Username, createdData.Username);
         Assert.AreEqual(data.PasswordHash, createdData.PasswordHash);
