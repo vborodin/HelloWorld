@@ -2,7 +2,7 @@
 using AuthenticationService.Controllers.Dtos;
 using AuthenticationService.Services;
 using AuthenticationService.Services.Model;
-using AuthenticationService.TokenGenerator;
+using AuthenticationService.Services.TokenGenerator;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,9 +29,9 @@ public class AccountControllerTest
     }
 
     [Test]
-    public void LoginReturnsOKAndTokenWhenSuccessfullyLoggedIn()
+    public async Task LoginReturnsOKAndTokenWhenSuccessfullyLoggedIn()
     {
-        var result = this.controller.Login(
+        var result = await this.controller.LoginAsync(
             userLogin: new UserLoginDto(Username: "ExistingUser", Password: "ValidPassword"),
             audience: "TestAudience",
             expirationPeriodMinutes: 10) as OkObjectResult;
@@ -42,27 +42,28 @@ public class AccountControllerTest
     }
 
     [Test]
-    public void LoginReturnsUnauthorizedWithIncorrectLoginOrPassword()
+    public async Task LoginReturnsUnauthorizedWithIncorrectLoginOrPassword()
     {
-        var result = this.controller.Login(
+        var result = await this.controller.LoginAsync(
             userLogin: new UserLoginDto(Username: "InvalidUser", Password: "InvalidPassword"),
             audience: "TestAudience",
-            expirationPeriodMinutes: 10) as UnauthorizedResult;
+            expirationPeriodMinutes: 10);
+        var unauthorized = result as UnauthorizedResult;
 
-        Assert.AreEqual(StatusCodes.Status401Unauthorized, result!.StatusCode);
+        Assert.AreEqual(StatusCodes.Status401Unauthorized, unauthorized!.StatusCode);
     }
 
     [Test]
-    public void LoginReturnsBadRequestWithNonPositiveExpirationPeriod()
+    public async Task LoginReturnsBadRequestWithNonPositiveExpirationPeriod()
     {
-        var result1 = this.controller.Login(
+        var result1 = await this.controller.LoginAsync(
             userLogin: new UserLoginDto(Username: "ExistingUser", Password: "ValidPassword"),
             audience: "TestAudience",
             expirationPeriodMinutes: 0) as BadRequestObjectResult;
 
         Assert.AreEqual(StatusCodes.Status400BadRequest, result1!.StatusCode);
 
-        var result2 = this.controller.Login(
+        var result2 = await this.controller.LoginAsync(
             userLogin: new UserLoginDto(Username: "ExistingUser", Password: "ValidPassword"),
             audience: "TestAudience",
             expirationPeriodMinutes: -1) as BadRequestObjectResult;
@@ -71,9 +72,9 @@ public class AccountControllerTest
     }
 
     [Test]
-    public void LoginReturnsBadRequestWithEmptyAudience()
+    public async Task LoginReturnsBadRequestWithEmptyAudience()
     {
-        var result = this.controller.Login(
+        var result = await this.controller.LoginAsync(
             userLogin: new UserLoginDto(Username: "ExistingUser", Password: "ValidPassword"),
             audience: "",
             expirationPeriodMinutes: 1) as BadRequestObjectResult;
@@ -82,9 +83,9 @@ public class AccountControllerTest
     }
 
     [Test]
-    public void RegisterReturnsOk()
+    public async Task RegisterReturnsOk()
     {
-        var result = this.controller.Register(
+        var result = await this.controller.Register(
             userRegistrationDto: new UserRegistrationDto(
                 Username: "NewUsername",
                 Password: "NewPassword",
@@ -105,14 +106,17 @@ public class AccountControllerTest
     {
         var mock = new Mock<IUserService>();
         mock.Setup(m => m.GetUserAsync("ExistingUser", "ValidPassword"))
-            .Returns(() => { return new UserModel(
-                Username: "ExistingUser",
-                Email: "ValidEmail",
-                Role: "ValidRole",
-                Surname: "ValidSurname",
-                GivenName: "ValidGivenName"); });
+            .Returns(() =>
+            {
+                return Task.FromResult<UserModel?>(new UserModel(
+                    Username: "ExistingUser",
+                    Email: "ValidEmail",
+                    Role: "ValidRole",
+                    Surname: "ValidSurname",
+                    GivenName: "ValidGivenName")); 
+            });
         mock.Setup(m => m.GetUserAsync("InvalidUser", "InvalidPassword"))
-            .Returns(() => null);
+            .Returns(() => Task.FromResult<UserModel?>(null!));
         mock.Setup(m => m.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .Callback<string, string, string, string, string>((username, password, email, givenName, surname) => 
                 this.data.Add(new UserModel(Username: username, Email: email, Role: "User", Surname: surname, GivenName: givenName)));
