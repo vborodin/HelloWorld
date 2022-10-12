@@ -41,7 +41,7 @@ public class UserServiceTest
     [Test]
     public void ReturnsUserByUsernameAndPassword()
     {
-        var result = this.service.GetUser("TestUsername", "TestPassword");
+        var result = this.service.GetUserAsync("TestUsername", "TestPassword");
 
         Assert.AreEqual("TestUsername", result!.Username);
         Assert.AreEqual("TestEmail", result!.Email);
@@ -53,7 +53,7 @@ public class UserServiceTest
     [Test]
     public void ReturnsNullForInvalidUsername()
     {
-        var result = this.service.GetUser("InvalidUsername", "TestPassword");
+        var result = this.service.GetUserAsync("InvalidUsername", "TestPassword");
 
         Assert.IsNull(result);
     }
@@ -61,7 +61,7 @@ public class UserServiceTest
     [Test]
     public void ReturnsNullForInvalidPassword()
     {
-        var result = this.service.GetUser("TestUsername", "InvalidPassword");
+        var result = this.service.GetUserAsync("TestUsername", "InvalidPassword");
 
         Assert.IsNull(result);
     }
@@ -69,17 +69,17 @@ public class UserServiceTest
     [Test]
     public void CreatesUserFromUserModelAndPassword()
     {
-        var before = this.service.GetUser("NewUsername", "NewPassword");
+        var before = this.service.GetUserAsync("NewUsername", "NewPassword");
         Assert.IsNull(before);
 
-        this.service.CreateUser(
+        this.service.CreateUserAsync(
             username: "NewUsername",
             password: "NewPassword",
             email: "NewEmail",
             givenName: "NewGivenName",
             surname: "NewSurname");
 
-        var result = this.service.GetUser("NewUsername", "NewPassword");
+        var result = this.service.GetUserAsync("NewUsername", "NewPassword");
 
         Assert.AreEqual("NewUsername", result!.Username);
         Assert.AreEqual("User", result!.Role);

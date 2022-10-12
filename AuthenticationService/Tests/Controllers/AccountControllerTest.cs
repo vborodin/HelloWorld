@@ -2,7 +2,7 @@
 using AuthenticationService.Controllers.Dtos;
 using AuthenticationService.Services;
 using AuthenticationService.Services.Model;
-using AuthenticationService.Services.TokenGenerator;
+using AuthenticationService.TokenGenerator;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -104,16 +104,16 @@ public class AccountControllerTest
     private Mock<IUserService> CreateUserServiceMock()
     {
         var mock = new Mock<IUserService>();
-        mock.Setup(m => m.GetUser("ExistingUser", "ValidPassword"))
+        mock.Setup(m => m.GetUserAsync("ExistingUser", "ValidPassword"))
             .Returns(() => { return new UserModel(
                 Username: "ExistingUser",
                 Email: "ValidEmail",
                 Role: "ValidRole",
                 Surname: "ValidSurname",
                 GivenName: "ValidGivenName"); });
-        mock.Setup(m => m.GetUser("InvalidUser", "InvalidPassword"))
+        mock.Setup(m => m.GetUserAsync("InvalidUser", "InvalidPassword"))
             .Returns(() => null);
-        mock.Setup(m => m.CreateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        mock.Setup(m => m.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .Callback<string, string, string, string, string>((username, password, email, givenName, surname) => 
                 this.data.Add(new UserModel(Username: username, Email: email, Role: "User", Surname: surname, GivenName: givenName)));
         return mock;
