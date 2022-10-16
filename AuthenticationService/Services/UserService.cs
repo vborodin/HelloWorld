@@ -59,6 +59,15 @@ public class UserService : IUserService
         return null;
     }
 
+    public async Task SetRoleAsync(string username, string role)
+    {
+        var filter = new UsernameFilter(username);
+        var userEntity = await this.repository.GetAsync(filter).FirstOrDefaultAsync();
+        userEntity = userEntity ?? throw new InvalidOperationException($"User {username} does not exist");
+        userEntity.Role = role;
+        await this.repository.UpdateAsync(userEntity);
+    }
+
     private bool IsPasswordValid(string password, string passwordHash, string salt)
     {
         var hashingData = new SaltPepperUTF8HashingData(password, salt, this.pepper);

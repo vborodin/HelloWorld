@@ -87,6 +87,21 @@ public class UserServiceTest
         Assert.AreEqual("NewSurname", result!.Surname);
     }
 
+    [Test]
+    public async Task SetsRoleForExistingUser()
+    {
+        await this.service.SetRoleAsync(username: "TestUsername", role: "NewRole");
+        var user = await this.service.GetUserAsync(username: "TestUsername", password: "TestPassword");
+
+        Assert.AreEqual("NewRole", user!.Role);
+    }
+
+    [Test]
+    public void ThrowsInvalidOperationExceptionWhenSetsRoleForNonexistingUser()
+    {
+        Assert.ThrowsAsync<InvalidOperationException>(() => this.service.SetRoleAsync("nonexisting", "role"));
+    }
+
     private Mock<ISaltGenerator<string>> CreateSaltGeneratorMock()
     {
         var mock = new Mock<ISaltGenerator<string>>();
