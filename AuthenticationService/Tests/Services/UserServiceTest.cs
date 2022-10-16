@@ -4,6 +4,7 @@ using AuthenticationService.Repository;
 using AuthenticationService.Repository.Entities;
 using AuthenticationService.Repository.Filter;
 using AuthenticationService.Services;
+using AuthenticationService.Services.Exceptions;
 using AuthenticationService.Services.Hashing.HashCalculator;
 using AuthenticationService.Services.Hashing.Salt;
 
@@ -99,7 +100,7 @@ public class UserServiceTest
     [Test]
     public void ThrowsInvalidOperationExceptionWhenSetsRoleForNonexistingUser()
     {
-        Assert.ThrowsAsync<InvalidOperationException>(() => this.service.SetRoleAsync("nonexisting", "role"));
+        Assert.ThrowsAsync<RoleAssignmentException>(() => this.service.SetRoleAsync("nonexisting", "role"));
     }
 
     private Mock<ISaltGenerator<string>> CreateSaltGeneratorMock()
