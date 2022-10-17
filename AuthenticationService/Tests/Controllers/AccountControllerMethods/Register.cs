@@ -8,7 +8,7 @@ using Moq;
 
 using NUnit.Framework;
 
-namespace AuthenticationService.Tests.Controllers.Account;
+namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
 public class Register: AccountTest
 {
