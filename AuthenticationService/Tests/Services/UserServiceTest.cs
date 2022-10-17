@@ -98,7 +98,7 @@ public class UserServiceTest
     }
 
     [Test]
-    public void ThrowsInvalidOperationExceptionWhenSetsRoleForNonexistingUser()
+    public void ThrowsRoleAssignmentExceptionWhenSetsRoleForNonexistingUser()
     {
         Assert.ThrowsAsync<RoleAssignmentException>(() => this.service.SetRoleAsync("nonexisting", "role"));
     }
