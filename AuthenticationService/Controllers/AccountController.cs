@@ -43,7 +43,7 @@ public class AccountController : ControllerBase
     [HttpPost("Register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-    public async Task<ActionResult> Register([FromBody] UserRegistrationDto userRegistrationDto)
+    public async Task<ActionResult> RegisterAsync([FromBody] UserRegistrationDto userRegistrationDto)
     {
         try
         {
@@ -66,7 +66,7 @@ public class AccountController : ControllerBase
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-    public async Task<ActionResult> SetRole([FromBody] SetRoleDto setRoleDto)
+    public async Task<ActionResult> SetRoleAsync([FromBody] SetRoleDto setRoleDto)
     {
         try
         {

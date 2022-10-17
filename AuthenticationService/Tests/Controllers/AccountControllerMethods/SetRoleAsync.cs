@@ -9,12 +9,12 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
-public class SetRole: AccountControllerTest
+public class SetRoleAsync: AccountControllerTest
 {
     [Test]
     public async Task SetsRole()
     {
-        var result = await this.controller.SetRole(
+        var result = await this.controller.SetRoleAsync(
             setRoleDto: new SetRoleDto(
                 Username: "ExistingUser",
                 Role: "NewRole"));
@@ -32,7 +32,7 @@ public class SetRole: AccountControllerTest
                 It.IsAny<string>()))
             .Throws<RoleAssignmentException>();
 
-        var result = await this.controller.SetRole(new SetRoleDto(
+        var result = await this.controller.SetRoleAsync(new SetRoleDto(
             Username: "InvalidUser",
             Role: "NewRole"));
 

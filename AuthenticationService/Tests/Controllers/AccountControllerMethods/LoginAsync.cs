@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
-public class Login: AccountControllerTest
+public class LoginAsync: AccountControllerTest
 {
     [Test]
     public async Task GeneratesJWTToken()

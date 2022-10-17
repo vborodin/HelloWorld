@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
-public class Register: AccountControllerTest
+public class RegisterAsync: AccountControllerTest
 {
     [Test]
     public async Task CreatesNewUser()
@@ -28,7 +28,7 @@ public class Register: AccountControllerTest
                 data.Add(new UserModel(username, email, "", surname, givenname));
             });
 
-        var result = await this.controller.Register(
+        var result = await this.controller.RegisterAsync(
             userRegistrationDto: new UserRegistrationDto(
                 Username: "NewUsername",
                 Password: "NewPassword",
@@ -56,7 +56,7 @@ public class Register: AccountControllerTest
                 It.IsAny<string>()))
             .Throws(new RegistrationException());
 
-        var result = await this.controller.Register(
+        var result = await this.controller.RegisterAsync(
             userRegistrationDto: new UserRegistrationDto(
                 Username: "ExistingUser",
                 Password: "NewPassword",
