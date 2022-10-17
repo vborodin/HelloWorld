@@ -1,6 +1,7 @@
 ﻿using AuthenticationService.Repository;
 using AuthenticationService.Repository.Entities;
 using AuthenticationService.Repository.Filter;
+using AuthenticationService.Services.Exceptions;
 using AuthenticationService.Services.Hashing.HashCalculator;
 using AuthenticationService.Services.Hashing.HashingData;
 using AuthenticationService.Services.Hashing.Salt;
@@ -57,6 +58,15 @@ public class UserService : IUserService
                 GivenName: userEntity.GivenName);
         }
         return null;
+    }
+
+    public async Task SetRoleAsync(string username, string role)
+    {
+        var filter = new UsernameFilter(username);
+        var userEntity = await this.repository.GetAsync(filter).FirstOrDefaultAsync();
+        userEntity = userEntity ?? throw new RoleAssignmentException($"User \"{username}\" does not exist");
+        userEntity.Role = role;
+        await this.repository.UpdateAsync(userEntity);
     }
 
     private bool IsPasswordValid(string password, string passwordHash, string salt)

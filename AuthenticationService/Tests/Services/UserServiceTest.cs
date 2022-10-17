@@ -4,6 +4,7 @@ using AuthenticationService.Repository;
 using AuthenticationService.Repository.Entities;
 using AuthenticationService.Repository.Filter;
 using AuthenticationService.Services;
+using AuthenticationService.Services.Exceptions;
 using AuthenticationService.Services.Hashing.HashCalculator;
 using AuthenticationService.Services.Hashing.Salt;
 
@@ -85,6 +86,21 @@ public class UserServiceTest
         Assert.AreEqual("NewEmail", result!.Email);
         Assert.AreEqual("NewGivenName", result!.GivenName);
         Assert.AreEqual("NewSurname", result!.Surname);
+    }
+
+    [Test]
+    public async Task SetsRoleForExistingUser()
+    {
+        await this.service.SetRoleAsync(username: "TestUsername", role: "NewRole");
+        var user = await this.service.GetUserAsync(username: "TestUsername", password: "TestPassword");
+
+        Assert.AreEqual("NewRole", user!.Role);
+    }
+
+    [Test]
+    public void ThrowsRoleAssignmentExceptionWhenSetsRoleForNonexistingUser()
+    {
+        Assert.ThrowsAsync<RoleAssignmentException>(() => this.service.SetRoleAsync("nonexisting", "role"));
     }
 
     private Mock<ISaltGenerator<string>> CreateSaltGeneratorMock()

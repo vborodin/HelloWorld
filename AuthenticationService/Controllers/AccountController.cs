@@ -1,8 +1,10 @@
 ﻿using AuthenticationService.Controllers.Dtos;
 using AuthenticationService.Services;
+using AuthenticationService.Services.Exceptions;
 using AuthenticationService.Services.Model;
 using AuthenticationService.Services.TokenGenerator;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.Controllers;
@@ -22,13 +24,9 @@ public class AccountController : ControllerBase
 
     [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
     public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
     {
-        if (!IsAudienceValid(audience))
-        {
-            return BadRequest($"{nameof(audience)} must not be empty");
-        }
         if (!IsExpiratonPeriodValid(expirationPeriodMinutes))
         {
             return BadRequest($"{nameof(expirationPeriodMinutes)} must be positive");
@@ -36,7 +34,7 @@ public class AccountController : ControllerBase
         var user = await this.userService.GetUserAsync(userLogin.Username, userLogin.Password);
         if (user == null)
         {
-            return Unauthorized();
+            return Unauthorized("Invalid username or password");
         }
         var token = this.tokenGenerator.Generate(user, audience, expirationPeriodMinutes);
         return Ok(token);
@@ -55,13 +53,25 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("Role")]
+    [Authorize(Roles = "Administrator")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    public async Task<ActionResult> SetRole([FromBody] SetRoleDto setRoleDto)
+    {
+        try
+        {
+            await this.userService.SetRoleAsync(setRoleDto.Username, setRoleDto.Role);
+        }
+        catch (RoleAssignmentException e)
+        {
+            return BadRequest(e.Message);
+        }
+        return Ok();
+    }
+
     private bool IsExpiratonPeriodValid(int expirationPeriodMinutes)
     {
         return expirationPeriodMinutes > 0;
-    }
-
-    private bool IsAudienceValid(string audience)
-    {
-        return !string.IsNullOrEmpty(audience);
     }
 }
