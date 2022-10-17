@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
-public class SetRole: AccountTest
+public class SetRole: AccountControllerTest
 {
     [Test]
     public async Task SetsRole()

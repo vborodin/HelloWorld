@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
-public abstract class AccountTest
+public abstract class AccountControllerTest
 {
     protected AccountController controller = null!;
     protected Mock<IUserService> userServiceMock = null!;

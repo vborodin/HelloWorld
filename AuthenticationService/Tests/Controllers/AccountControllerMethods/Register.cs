@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
-public class Register: AccountTest
+public class Register: AccountControllerTest
 {
     [Test]
     public async Task CreatesNewUser()
