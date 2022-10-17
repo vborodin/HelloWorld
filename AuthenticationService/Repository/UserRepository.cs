@@ -16,6 +16,11 @@ public class UserRepository : IRepository<UserEntity>
 
     public async Task CreateAsync(UserEntity data)
     {
+        var exists = await this.context.Users.AnyAsync(x => x.Username == data.Username);
+        if (exists)
+        {
+            throw new InvalidOperationException($"{nameof(data.Username)} \"{data.Username}\" already exists");
+        }
         await this.context.AddAsync(data);
         await this.context.SaveChangesAsync();
     }
