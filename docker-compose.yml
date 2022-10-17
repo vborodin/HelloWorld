@@ -19,6 +19,8 @@ services:
       POSTGRES_PASSWORD: example
     ports:
       - "5432"
+    depends_on:
+      - "adminer"
   adminer:
     image: adminer
     ports:
