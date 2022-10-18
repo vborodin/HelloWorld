@@ -42,14 +42,23 @@ public class AccountController : ControllerBase
 
     [HttpPost("Register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> Register([FromBody] UserRegistrationDto userRegistrationDto)
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    public async Task<ActionResult> RegisterAsync([FromBody] UserRegistrationDto userRegistrationDto)
     {
-        await this.userService.CreateUserAsync(
-            username: userRegistrationDto.Username,
-            password: userRegistrationDto.Password,
-            email: userRegistrationDto.Email,
-            givenName: userRegistrationDto.GivenName,
-            surname: userRegistrationDto.Surname);
+        try
+        {
+            await this.userService.CreateUserAsync(
+                username: userRegistrationDto.Username,
+                password: userRegistrationDto.Password,
+                email: userRegistrationDto.Email,
+                givenName: userRegistrationDto.GivenName,
+                surname: userRegistrationDto.Surname);
+        }
+        catch (RegistrationException e)
+        {
+            return BadRequest(e.Message);
+        }
+        
         return Ok();
     }
 
@@ -57,7 +66,7 @@ public class AccountController : ControllerBase
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-    public async Task<ActionResult> SetRole([FromBody] SetRoleDto setRoleDto)
+    public async Task<ActionResult> SetRoleAsync([FromBody] SetRoleDto setRoleDto)
     {
         try
         {

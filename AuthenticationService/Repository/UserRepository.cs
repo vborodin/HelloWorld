@@ -14,9 +14,14 @@ public class UserRepository : IRepository<UserEntity>
         this.context = context;
     }
 
-    public async Task CreateAsync(UserEntity data)
+    public async Task CreateAsync(UserEntity entity)
     {
-        await this.context.AddAsync(data);
+        var exists = await this.context.Users.AnyAsync(x => x.Username == entity.Username);
+        if (exists)
+        {
+            throw new InvalidOperationException($"{nameof(entity.Username)} \"{entity.Username}\" already exists");
+        }
+        await this.context.AddAsync(entity);
         await this.context.SaveChangesAsync();
     }
 
@@ -25,14 +30,14 @@ public class UserRepository : IRepository<UserEntity>
         return filter.Apply(this.context.Users).AsAsyncEnumerable();
     }
 
-    public async Task UpdateAsync(UserEntity data)
+    public async Task UpdateAsync(UserEntity entity)
     {
-        var exists = await this.context.Users.AnyAsync(x => x.Id == data.Id);
+        var exists = await this.context.Users.AnyAsync(x => x.Id == entity.Id);
         if (!exists)
         {
-            throw new InvalidOperationException($"Can not update {nameof(UserEntity)}: id {data.Id} does not exist");
+            throw new InvalidOperationException($"Can not update {nameof(UserEntity)}: id {entity.Id} does not exist");
         }
-        this.context.Update(data);
+        this.context.Update(entity);
         await this.context.SaveChangesAsync();
     }
 }

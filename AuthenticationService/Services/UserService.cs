@@ -41,7 +41,14 @@ public class UserService : IUserService
             Username = username
         };
 
-        await this.repository.CreateAsync(data);
+        try
+        {
+            await this.repository.CreateAsync(data);
+        }
+        catch (InvalidOperationException e)
+        {
+            throw new RegistrationException(e.Message, e);
+        }
     }
 
     public async Task<UserModel?> GetUserAsync(string username, string password)

@@ -3,30 +3,24 @@ using AuthenticationService.Repository.Entities;
 
 using NUnit.Framework;
 
-namespace AuthenticationService.Tests.Filtering;
+namespace AuthenticationService.Tests.Filtering.UsernameFilterMethods;
 
-public class UsernameFilterTest
+public class Apply
 {
-    [Test]
-    public void ReturnsUserModelByUsername()
+    [TestCase("2", 1)]
+    [TestCase("1", 2)]
+    public void FiltersByUsername(string username, int amount)
     {
         var source = CreateTestData();
-        var filter = new UsernameFilter("2");
+        var filter = new UsernameFilter(username);
 
         var result = filter.Apply(source);
 
-        Assert.AreEqual("2", result.Single().Username);
-    }
-
-    [Test]
-    public void ReturnsAllMatches()
-    {
-        var source = CreateTestData();
-        var filter = new UsernameFilter("1");
-
-        var result = filter.Apply(source);
-
-        Assert.AreEqual(2, result.Count());
+        Assert.AreEqual(amount, result.Count());
+        foreach (var user in result)
+        {
+            Assert.AreEqual(username, user.Username);
+        }
     }
 
     private IQueryable<UserEntity> CreateTestData()
