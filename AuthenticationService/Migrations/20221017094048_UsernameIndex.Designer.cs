@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AuthenticationService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221004071849_CreateInitial")]
-    partial class CreateInitial
+    [Migration("20221017094048_UsernameIndex")]
+    partial class UsernameIndex
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace AuthenticationService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AuthenticationService.Repository.Model.UserModel", b =>
+            modelBuilder.Entity("AuthenticationService.Repository.Entities.UserEntity", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,6 +57,9 @@ namespace AuthenticationService.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

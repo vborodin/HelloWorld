@@ -7,7 +7,7 @@ public static class DatabaseSetup
 {
     public static WebApplicationBuilder RegisterDatabase(this WebApplicationBuilder builder)
     {
-        builder.Services.AddDbContext<UserModelContext>(options =>
+        builder.Services.AddDbContext<AppDbContext>(options =>
         {
             options.UseNpgsql(builder.Configuration["ConnectionStrings:AuthenticationDB"]);
         });

@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace AuthenticationService.Repository.Entities;
 
+[Index(nameof(Username), IsUnique = true)]
 public class UserEntity
 {
     public long Id { get; set; }
