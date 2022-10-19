@@ -32,4 +32,17 @@ public class Calculate: SHA256Base64HashCalculatorTest
 
         Assert.AreEqual(result1, result5);
     }
+
+    [Test]
+    public void CalculateDifferentHashesForDifferentData()
+    {
+        var calculator = new SHA256Base64HashCalculator(1);
+        var data1 = new byte[] { 0x0, 0x1 };
+        var data2 = new byte[] { 0x0, 0x2 };
+
+        var hash1 = calculator.Calculate(data1);
+        var hash2 = calculator.Calculate(data2);
+
+        Assert.AreNotEqual(hash1, hash2);
+    }
 }
