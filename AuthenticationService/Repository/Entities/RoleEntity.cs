@@ -2,6 +2,7 @@
 
 public class RoleEntity
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Role { get; set; } = null!;
+    public ICollection<UserEntity> Users { get; set; } = null!;
 }

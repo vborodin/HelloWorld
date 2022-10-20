@@ -2,6 +2,7 @@
 using AuthenticationService.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AuthenticationService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221020060143_AddUserRoles")]
+    partial class AddUserRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,30 +81,32 @@ namespace AuthenticationService.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("RoleUser", b =>
+            modelBuilder.Entity("RoleEntityUserEntity", b =>
                 {
-                    b.Property<long>("RoleId")
+                    b.Property<long>("RolesId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("UserId")
+                    b.Property<long>("UsersId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("RoleId", "UserId");
+                    b.HasKey("RolesId", "UsersId");
 
-                    b.ToTable("RoleUser");
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("RoleEntityUserEntity");
                 });
 
-            modelBuilder.Entity("RoleUser", b =>
+            modelBuilder.Entity("RoleEntityUserEntity", b =>
                 {
                     b.HasOne("AuthenticationService.Repository.Entities.RoleEntity", null)
                         .WithMany()
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AuthenticationService.Repository.Entities.UserEntity", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
