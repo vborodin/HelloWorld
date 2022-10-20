@@ -10,4 +10,5 @@ public class AppDbContext: DbContext
     public AppDbContext() { }
 
     public virtual DbSet<UserEntity> Users { get; set; } = null!;
+    public virtual DbSet<RoleEntity> Roles { get; set; } = null!;
 }
