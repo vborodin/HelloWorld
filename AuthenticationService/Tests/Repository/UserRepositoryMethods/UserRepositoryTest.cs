@@ -23,6 +23,8 @@ public abstract class UserRepositoryTest
     [SetUp]
     public void Setup()
     {
-        this.provider = new TestRepositoryProvider<UserEntity>(context => new UserRepository(context), context => context.Users);
+        this.provider = new TestRepositoryProvider<UserEntity>(
+            repositoryFactory: context => new UserRepository(context),
+            dbSetFactoryExpression: context => context.Users);
     }
 }
