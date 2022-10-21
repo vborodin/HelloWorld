@@ -14,11 +14,6 @@ public class UserEntity
     public string Salt { get; set; } = null!;
     [Required]
     public string PasswordHash { get; set; } = null!;
-    public string? Email { get; set; }
-    [Required]
-    public string Role { get; set; } = null!;
     [Required]
     public ICollection<RoleEntity> Roles { get; set; } = null!;
-    public string? Surname { get; set; }
-    public string? GivenName { get; set; }
 }
