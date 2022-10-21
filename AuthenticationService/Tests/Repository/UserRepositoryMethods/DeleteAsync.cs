@@ -12,23 +12,23 @@ public class DeleteAsync: UserRepositoryTest
     public async Task DeletesUserAndSavesChanges()
     {
         var entity = new UserEntity() { Id = 1 };
-        this.data.Add(entity);
-        this.contextMock
-            .Setup(m => m.Remove<UserEntity>(It.IsAny<UserEntity>()))
-            .Callback<UserEntity>(entity => this.data.Remove(entity));
+        this.Data.Add(entity);
+        this.ContextMock
+            .Setup(m => m.Remove(It.IsAny<UserEntity>()))
+            .Callback<UserEntity>(entity => this.Data.Remove(entity));
         
-        await this.repository.DeleteAsync(entity);
+        await this.Repository.DeleteAsync(entity);
 
-        this.contextMock.Verify(m => m.Remove(entity), Times.Once);
-        this.contextMock.Verify(m => m.SaveChangesAsync(default), Times.Once);
-        Assert.IsEmpty(this.data);
+        this.ContextMock.Verify(m => m.Remove(entity), Times.Once);
+        this.ContextMock.Verify(m => m.SaveChangesAsync(default), Times.Once);
+        Assert.IsEmpty(this.Data);
     }
 
     [Test]
-    public async Task RequiresExistingUser()
+    public void RequiresExistingUser()
     {
         var entity = new UserEntity() { Id = 1 };
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => this.repository.DeleteAsync(entity));
+        Assert.ThrowsAsync<InvalidOperationException>(() => this.Repository.DeleteAsync(entity));
     }
 }

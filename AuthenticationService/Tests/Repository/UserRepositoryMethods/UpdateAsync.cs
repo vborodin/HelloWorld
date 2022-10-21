@@ -16,18 +16,18 @@ public class UpdateAsync: UserRepositoryTest
             Id = 1,
             Username = "Username"
         };
-        this.data.Add(entity);
+        this.Data.Add(entity);
         
-        await this.repository.UpdateAsync(entity);
+        await this.Repository.UpdateAsync(entity);
 
-        this.contextMock.Verify(context => context.Update(entity), Times.Once);
-        this.contextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
+        this.ContextMock.Verify(context => context.Update(entity), Times.Once);
+        this.ContextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
     }
 
     [Test]
     public void RequiresExistingUser()
     {
         var data = new UserEntity { Id = 1 };
-        Assert.ThrowsAsync<InvalidOperationException>(() => this.repository.UpdateAsync(data));
+        Assert.ThrowsAsync<InvalidOperationException>(() => this.Repository.UpdateAsync(data));
     }
 }

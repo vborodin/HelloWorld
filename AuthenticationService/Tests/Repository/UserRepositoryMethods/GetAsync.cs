@@ -9,13 +9,13 @@ public class GetAsync: UserRepositoryTest
     [Test]
     public void AppliesFilterToDbSet()
     {
-        this.contextMock
+        this.ContextMock
             .Setup(m => m.Users)
-            .Returns(this.dbSetMock.Object);
+            .Returns(this.DbSetMock.Object);
 
-        var result = this.repository.GetAsync(this.filterMock.Object);
+        var result = this.Repository.GetAsync(this.FilterMock.Object);
 
-        this.filterMock.Verify(filter => filter.Apply(this.dbSetMock.Object), Times.Once);
-        Assert.AreEqual(this.dbSetMock.Object, result);
+        this.FilterMock.Verify(filter => filter.Apply(this.DbSetMock.Object), Times.Once);
+        Assert.AreEqual(this.DbSetMock.Object, result);
     }
 }
