@@ -25,6 +25,17 @@ public class UserRepository : IRepository<UserEntity>
         await this.context.SaveChangesAsync();
     }
 
+    public async Task DeleteAsync(UserEntity entity)
+    {
+        var exists = await this.context.Users.AnyAsync(x => x.Id == entity.Id);
+        if (!exists)
+        {
+            throw new InvalidOperationException($"Can not delete {nameof(UserEntity)}: id {entity.Id} does not exist");
+        }
+        this.context.Remove(entity);
+        await this.context.SaveChangesAsync();
+    }
+
     public IAsyncEnumerable<UserEntity> GetAsync(IFilter<UserEntity> filter)
     {
         return filter.Apply(this.context.Users).AsAsyncEnumerable();

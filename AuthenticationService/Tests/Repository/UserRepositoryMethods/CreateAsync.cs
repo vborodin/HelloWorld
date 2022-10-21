@@ -9,7 +9,7 @@ namespace AuthenticationService.Tests.Repository.UserRepositoryMethods;
 public class CreateAsync: UserRepositoryTest
 {
     [Test]
-    public async Task AddsDataAndSavesChanges()
+    public async Task CreatesUserAndSavesChanges()
     {
         var entity = new UserEntity { Username = "NewUsername" };
 
