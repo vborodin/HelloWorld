@@ -22,14 +22,14 @@ public class UserModelTokenGenerator : ITokenGenerator<UserModel>
 
     public string Generate(UserModel value, string audience, int expirationPeriodMinutes)
     {
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, value.Username!),
-            new Claim(ClaimTypes.Email, value.Email!),
-            new Claim(ClaimTypes.GivenName, value.GivenName!),
-            new Claim(ClaimTypes.Surname, value.Surname!),
-            new Claim(ClaimTypes.Role, value.Role!)
         };
+        foreach (var role in value.Roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
         var token = new JwtSecurityToken(
             issuer: this.issuer,
             audience: audience,
