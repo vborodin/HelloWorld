@@ -10,23 +10,20 @@ public abstract class UserModelTokenGeneratorTest
     protected readonly string securityKey = "1111111111111111";
     protected readonly string issuer = "issuer";
     protected ITokenGenerator<UserModel> generator = null!;
-    protected UserModel data = null!;
+    protected UserModel userModel = null!;
 
     [SetUp]
     public void Setup()
     {
         this.generator = new UserModelTokenGenerator(this.securityKey, this.issuer);
-        this.data = CreateTestData();
+        this.userModel = CreateTestData();
     }
 
     private UserModel CreateTestData()
     {
         return new UserModel(
-            Email: "TestEmail",
-            GivenName: "TestGivenName",
-            Role: "TestRole",
-            Surname: "TestSurname",
-            Username: "TestUsername"
+            Username: "TestUsername",
+            Roles: new List<string>()
         );
     }
 }

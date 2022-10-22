@@ -14,7 +14,7 @@ public class Generate: UserModelTokenGeneratorTest
     public void GeneratesValidHeader()
     {
         var token = Decode(
-            this.generator.Generate(this.data, "1", 1));
+            this.generator.Generate(this.userModel, "1", 1));
         
         Assert.AreEqual("HS256", token.Header.Alg);
         Assert.AreEqual("JWT", token.Header.Typ);
@@ -24,31 +24,38 @@ public class Generate: UserModelTokenGeneratorTest
     public void GeneratesValidPayload()
     {
         var expirationPeriodMinutes = 1;
-        var audience = "1,2";
+        var audience = "1";
+        var userModel = this.userModel with
+        {
+            Roles = new List<string>()
+            {
+                "User",
+                "Administrator"
+            }
+        };
 
         var token = Decode(
-            this.generator.Generate(this.data, "1,2", expirationPeriodMinutes));
+            this.generator.Generate(userModel, audience, expirationPeriodMinutes));
 
-        var nameIdentifier = token.Payload[ClaimTypes.NameIdentifier] as string;
-        var emailAddress = token.Payload[ClaimTypes.Email] as string;
-        var givenName = token.Payload[ClaimTypes.GivenName] as string;
-        var surname = token.Payload[ClaimTypes.Surname] as string;
-        var role = token.Payload[ClaimTypes.Role] as string;
+        var nameIdentifier = token.Claims
+            .Single(claim => claim.Type == ClaimTypes.NameIdentifier)
+            .Value;
+        var roles = token.Claims
+            .Where(claim => claim.Type == ClaimTypes.Role)
+            .Select(x => x.Value);
+        
         Assert.AreEqual(audience, token.Payload.Aud.Single());
         Assert.AreEqual(this.issuer, token.Payload.Iss);
         Assert.Less(DateTime.UtcNow, token.Payload.ValidTo);
         Assert.Greater(DateTime.UtcNow.AddMinutes(expirationPeriodMinutes), token.Payload.ValidTo);
-        Assert.AreEqual(this.data.Username, nameIdentifier);
-        Assert.AreEqual(this.data.Email, emailAddress);
-        Assert.AreEqual(this.data.GivenName, givenName);
-        Assert.AreEqual(this.data.Surname, surname);
-        Assert.AreEqual(this.data.Role, role);
+        Assert.AreEqual(userModel.Username, nameIdentifier);
+        Assert.AreEqual(userModel.Roles, roles);
     }
 
     [Test]
     public void GeneratesValidSignature()
     {
-        var token = this.generator.Generate(this.data, "1", 1);
+        var token = this.generator.Generate(this.userModel, "1", 1);
 
         var handler = new JwtSecurityTokenHandler();
         var validationParameters = new TokenValidationParameters()
