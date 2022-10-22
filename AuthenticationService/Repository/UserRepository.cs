@@ -38,7 +38,7 @@ public class UserRepository : IRepository<UserEntity>
 
     public IAsyncEnumerable<UserEntity> GetAsync(IFilter<UserEntity> filter)
     {
-        return filter.Apply(this.context.Users).AsAsyncEnumerable();
+        return filter.Apply(this.context.Users).Include(user => user.Roles).AsAsyncEnumerable();
     }
 
     public async Task UpdateAsync(UserEntity entity)

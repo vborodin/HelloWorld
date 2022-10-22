@@ -12,7 +12,7 @@ namespace AuthenticationService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20221020060143_AddUserRoles")]
-    partial class AddUserRoles
+    partial class BigIntRoleId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
