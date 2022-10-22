@@ -25,7 +25,7 @@ public class AccountController : ControllerBase
     [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
-    public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
+    public async Task<IActionResult> LoginAsync([FromBody] UserPasswordDto userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
     {
         if (!IsExpiratonPeriodValid(expirationPeriodMinutes))
         {
@@ -43,16 +43,13 @@ public class AccountController : ControllerBase
     [HttpPost("Register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-    public async Task<ActionResult> RegisterAsync([FromBody] UserRegistrationDto userRegistrationDto)
+    public async Task<ActionResult> RegisterAsync([FromBody] UserPasswordDto userPasswordDto)
     {
         try
         {
             await this.userService.CreateUserAsync(
-                username: userRegistrationDto.Username,
-                password: userRegistrationDto.Password,
-                email: userRegistrationDto.Email,
-                givenName: userRegistrationDto.GivenName,
-                surname: userRegistrationDto.Surname);
+                username: userPasswordDto.Username,
+                password: userPasswordDto.Password);
         }
         catch (RegistrationException e)
         {
@@ -70,7 +67,7 @@ public class AccountController : ControllerBase
     {
         try
         {
-            await this.userService.SetRoleAsync(setRoleDto.Username, setRoleDto.Role);
+            await this.userService.AddRoleAsync(setRoleDto.Username, setRoleDto.Role);
         }
         catch (RoleAssignmentException e)
         {
