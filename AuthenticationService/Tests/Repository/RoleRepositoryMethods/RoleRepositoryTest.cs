@@ -16,7 +16,7 @@ public abstract class RoleRepositoryTest
     protected IRepository<RoleEntity> Repository => this.provider.Repository;
     protected Mock<AppDbContext> ContextMock => this.provider.ContextMock;
     protected Mock<DbSet<RoleEntity>> DbSetMock => this.provider.DbSetMock;
-    protected List<RoleEntity> Data => this.provider.Data;
+    protected List<RoleEntity> Data => this.provider.Entities;
     protected Mock<IFilter<RoleEntity>> FilterMock => this.provider.FilterMock;
 
     private TestRepositoryProvider<RoleEntity> provider = null!;

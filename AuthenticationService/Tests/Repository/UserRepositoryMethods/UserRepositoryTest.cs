@@ -16,7 +16,7 @@ public abstract class UserRepositoryTest
     protected IRepository<UserEntity> Repository => this.provider.Repository;
     protected Mock<AppDbContext> ContextMock => this.provider.ContextMock;
     protected Mock<DbSet<UserEntity>> DbSetMock => this.provider.DbSetMock;
-    protected List<UserEntity> Data => this.provider.Data;
+    protected List<UserEntity> Entities => this.provider.Entities;
     protected Mock<IFilter<UserEntity>> FilterMock => this.provider.FilterMock;
 
     private TestRepositoryProvider<UserEntity> provider = null!; 

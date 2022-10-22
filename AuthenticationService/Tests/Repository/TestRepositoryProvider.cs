@@ -16,11 +16,11 @@ public class TestRepositoryProvider<TEntity> where TEntity : class
     public Mock<IFilter<TEntity>> FilterMock { get; init; } = null!;
     public Mock<AppDbContext> ContextMock { get; init; } = null!;
     public Mock<DbSet<TEntity>> DbSetMock { get; init; } = null!;
-    public List<TEntity> Data { get; init; } = null!;
+    public List<TEntity> Entities { get; init; } = null!;
 
     public TestRepositoryProvider(Func<AppDbContext, IRepository<TEntity>> repositoryFactory, Expression<Func<AppDbContext, DbSet<TEntity>>> dbSetFactoryExpression)
     {
-        this.Data = new List<TEntity>();
+        this.Entities = new List<TEntity>();
         this.FilterMock = CreateFilterMock();
         this.DbSetMock = CreateDbSetMock();
         this.ContextMock = CreateAppDbContextContextMock(dbSetFactoryExpression, this.DbSetMock.Object);
@@ -41,11 +41,11 @@ public class TestRepositoryProvider<TEntity> where TEntity : class
         var mock = new Mock<AppDbContext>();
         mock.Setup(dbSetFactoryExpression).Returns(dbSet);
         mock.Setup(m => m.AddAsync(It.IsAny<TEntity>(), It.IsAny<CancellationToken>()))
-            .Callback<TEntity, CancellationToken>((entity, _) => this.Data.Add(entity));
+            .Callback<TEntity, CancellationToken>((entity, _) => this.Entities.Add(entity));
         mock.Setup(m => m.Update(It.IsAny<TEntity>()))
             .Callback<TEntity>((entity) =>
             {
-                this.Data.Add(entity);
+                this.Entities.Add(entity);
             });
         return mock;
     }
@@ -53,7 +53,7 @@ public class TestRepositoryProvider<TEntity> where TEntity : class
     private Mock<DbSet<TEntity>> CreateDbSetMock()
     {
         var mock = new Mock<DbSet<TEntity>>();
-        var queryable = this.Data.AsQueryable();
+        var queryable = this.Entities.AsQueryable();
 
         mock.As<IQueryable<TEntity>>()
             .Setup(m => m.Provider)
@@ -64,7 +64,7 @@ public class TestRepositoryProvider<TEntity> where TEntity : class
 
         mock.As<IAsyncEnumerable<TEntity>>()
             .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-            .Returns(() => new InMemoryDbAsyncEnumerator<TEntity>(this.Data.GetEnumerator()));
+            .Returns(() => new InMemoryDbAsyncEnumerator<TEntity>(this.Entities.GetEnumerator()));
         return mock;
     }
 }
