@@ -29,10 +29,12 @@ public static class DependencyInjectionSetup
             return new Base64StringSaltGenerator(int.Parse(builder.Configuration["Security:SaltLength"]));
         });
         builder.Services.AddScoped<IRepository<UserEntity>, UserRepository>();
+        builder.Services.AddScoped<IRepository<RoleEntity>, RoleRepository>();
         builder.Services.AddScoped<IUserService>((serviceProvider) =>
         {
             return new UserService(
                 serviceProvider.GetRequiredService<IRepository<UserEntity>>(),
+                serviceProvider.GetRequiredService<IRepository<RoleEntity>>(),
                 serviceProvider.GetRequiredService<IHashCalculator<byte[], string>>(),
                 serviceProvider.GetRequiredService<ISaltGenerator<string>>(),
                 builder.Configuration["Security:Pepper"]);
