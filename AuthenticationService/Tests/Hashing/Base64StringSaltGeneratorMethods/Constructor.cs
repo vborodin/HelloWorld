@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Hashing.Base64StringSaltGeneratorMethods;
 
+[Category("Hashing")]
 public class Constructor
 {
     [Test]

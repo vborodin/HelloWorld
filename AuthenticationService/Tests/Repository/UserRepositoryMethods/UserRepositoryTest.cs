@@ -10,6 +10,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Repository.UserRepositoryMethods;
 
+[Category("Repositories")]
 public abstract class UserRepositoryTest
 {
     protected IRepository<UserEntity> Repository => this.provider.Repository;

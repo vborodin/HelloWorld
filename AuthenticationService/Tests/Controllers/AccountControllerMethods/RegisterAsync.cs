@@ -19,29 +19,21 @@ public class RegisterAsync: AccountControllerTest
         this.userServiceMock
             .Setup(m => m.CreateUserAsync(
                 It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
                 It.IsAny<string>()))
-            .Callback<string, string, string, string, string>((username, _, email, givenname, surname) =>
+            .Callback<string, string>((username, _) =>
             {
-                data.Add(new UserModel(username, email, "", surname, givenname));
+                data.Add(new UserModel(username, new List<string>()));
             });
 
         var result = await this.controller.RegisterAsync(
-            userRegistrationDto: new UserRegistrationDto(
+            userPasswordDto: new UserPasswordDto(
                 Username: "NewUsername",
-                Password: "NewPassword",
-                Email: "NewEmail",
-                GivenName: "NewGivenName",
-                Surname: "NewSurname"));
+                Password: "NewPassword"));
         var user = data.Single(x => x.Username == "NewUsername");
 
         Assert.True(result is OkResult);
         Assert.AreEqual("NewUsername", user.Username);
-        Assert.AreEqual("NewEmail", user.Email);
-        Assert.AreEqual("NewSurname", user.Surname);
-        Assert.AreEqual("NewGivenName", user.GivenName);
+        Assert.NotNull(user.Roles);
     }
 
     [Test]
@@ -50,19 +42,13 @@ public class RegisterAsync: AccountControllerTest
         this.userServiceMock
             .Setup(m => m.CreateUserAsync(
                 It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
                 It.IsAny<string>()))
             .Throws(new RegistrationException());
 
         var result = await this.controller.RegisterAsync(
-            userRegistrationDto: new UserRegistrationDto(
+            userPasswordDto: new UserPasswordDto(
                 Username: "ExistingUser",
-                Password: "NewPassword",
-                Email: "NewEmail",
-                GivenName: "NewGivenName",
-                Surname: "NewSurname"));
+                Password: "NewPassword"));
 
         Assert.True(result is BadRequestObjectResult);
     }

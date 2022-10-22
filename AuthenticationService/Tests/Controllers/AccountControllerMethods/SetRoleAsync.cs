@@ -20,14 +20,14 @@ public class SetRoleAsync: AccountControllerTest
                 Role: "NewRole"));
 
         Assert.True(result is OkResult);
-        this.userServiceMock.Verify(s => s.SetRoleAsync("ExistingUser", "NewRole"), Times.Once);
+        this.userServiceMock.Verify(s => s.AddRoleAsync("ExistingUser", "NewRole"), Times.Once);
     }
 
     [Test]
     public async Task RequiresExistingUser()
     {
         this.userServiceMock
-            .Setup(m => m.SetRoleAsync(
+            .Setup(m => m.AddRoleAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>()))
             .Throws<RoleAssignmentException>();

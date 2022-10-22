@@ -2,6 +2,7 @@
 
 namespace AuthenticationService.Tests.Hashing.SHA256Base64HashCalculatorMethods;
 
+[Category("Hashing")]
 public abstract class SHA256Base64HashCalculatorTest
 {
     protected byte[] testData = null!;

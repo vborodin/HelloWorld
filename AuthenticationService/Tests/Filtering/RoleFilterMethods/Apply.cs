@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Filtering.RoleFilterMethods;
 
+[Category("Filtering")]
 public class Apply
 {
     [TestCase("1", 1)]

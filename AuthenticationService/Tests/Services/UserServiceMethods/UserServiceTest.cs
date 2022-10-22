@@ -10,6 +10,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Services.UserServiceMethods;
 
+[Category("Services")]
 public abstract class UserServiceTest
 {
     protected IUserService service = null!;

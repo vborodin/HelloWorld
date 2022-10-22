@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.TokenGeneration.UserModelTokenGeneratorMethods;
 
+[Category("JWTGeneration")]
 public abstract class UserModelTokenGeneratorTest
 {
     protected readonly string securityKey = "1111111111111111";
