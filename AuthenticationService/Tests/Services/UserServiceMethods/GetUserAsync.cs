@@ -12,9 +12,9 @@ public class GetUserAsync: UserServiceTest
     [Test]
     public async Task ReturnsUserModel()
     {
-        this.repositoryMock
+        this.userRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
-            .Returns(ToAsyncEnumerable(this.data));
+            .Returns(ToAsyncEnumerable(this.userEntities));
         this.hashCalculatorMock
             .Setup(m => m.Calculate(It.IsAny<byte[]>()))
             .Returns("ValidHash");
@@ -22,16 +22,13 @@ public class GetUserAsync: UserServiceTest
         var result = await this.service.GetUserAsync("ValidUsername", "ValidPassword");
 
         Assert.AreEqual("ValidUsername", result!.Username);
-        Assert.AreEqual("TestEmail", result!.Email);
-        Assert.AreEqual("TestRole", result!.Role);
-        Assert.AreEqual("TestSurname", result!.Surname);
-        Assert.AreEqual("TestGivenName", result!.GivenName);
+        Assert.Contains("AssignedRole", result!.Roles.ToList());
     }
 
     [Test]
     public async Task RequiresExistingUsername()
     {
-        this.repositoryMock
+        this.userRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
             .Returns(AsyncEnumerable.Empty<UserEntity>()); 
 
@@ -43,9 +40,9 @@ public class GetUserAsync: UserServiceTest
     [Test]
     public async Task RequiresValidPassword()
     {
-        this.repositoryMock
+        this.userRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
-            .Returns(ToAsyncEnumerable(this.data));
+            .Returns(ToAsyncEnumerable(this.userEntities));
         this.hashCalculatorMock
             .Setup(m => m.Calculate(It.IsAny<byte[]>()))
             .Returns("InvalidHash");

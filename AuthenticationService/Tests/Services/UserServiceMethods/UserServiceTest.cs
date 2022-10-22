@@ -13,42 +13,58 @@ namespace AuthenticationService.Tests.Services.UserServiceMethods;
 public abstract class UserServiceTest
 {
     protected IUserService service = null!;
-    protected Mock<IRepository<UserEntity>> repositoryMock = null!;
+    protected Mock<IRepository<UserEntity>> userRepositoryMock = null!;
+    protected Mock<IRepository<RoleEntity>> roleRepositoryMock = null!;
     protected Mock<IHashCalculator<byte[], string>> hashCalculatorMock = null!;
     protected Mock<ISaltGenerator<string>> saltGeneratorMock = null!;
-    protected List<UserEntity> data = null!;
+    protected List<UserEntity> userEntities = null!;
+    protected List<RoleEntity> roleEntities = null!;
 
     [SetUp]
     public void Setup()
     {
         var pepper = "Pepper";
-        this.repositoryMock = new Mock<IRepository<UserEntity>>();
+        this.userRepositoryMock = new Mock<IRepository<UserEntity>>();
+        this.roleRepositoryMock = new Mock<IRepository<RoleEntity>>();
         this.hashCalculatorMock = new Mock<IHashCalculator<byte[], string>>();
         this.saltGeneratorMock = new Mock<ISaltGenerator<string>>();
-        this.data = CreateTestData();
+        this.userEntities = CreateUserEntities();
+        this.roleEntities = CreateRoleEntities();
 
         this.service = new UserService(
-            repository: this.repositoryMock.Object,
+            userRepository: this.userRepositoryMock.Object,
+            roleRepository: this.roleRepositoryMock.Object,
             hashCalculator: this.hashCalculatorMock.Object,
             saltGenerator: this.saltGeneratorMock.Object,
             pepper: pepper);
     }
 
-    private List<UserEntity> CreateTestData()
+    private List<UserEntity> CreateUserEntities()
     {
         return new()
         {
             new()
             {
-                Id = 0,
+                Id = 1,
                 Username = "ValidUsername",
                 PasswordHash = "ValidHash",
                 Salt = "Salt",
-                Email = "TestEmail",
-                Role = "TestRole",
-                Surname = "TestSurname",
-                GivenName = "TestGivenName"
+                Roles = new List<RoleEntity>()
+                {
+                    new() { Id = 1, Role = "AssignedRole" }
+                }
             }
+        };
+    }
+
+    private List<RoleEntity> CreateRoleEntities()
+    {
+        return new List<RoleEntity>()
+        {
+            new() { Id = 1, Role = "AssignedRole" },
+            new() { Id = 2, Role = "NewRole" },
+            new() { Id = 3, Role = "User" },
+            new() { Id = 4, Role = "NotAssignedRole" }
         };
     }
 
