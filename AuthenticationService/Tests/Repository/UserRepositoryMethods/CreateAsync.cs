@@ -9,22 +9,22 @@ namespace AuthenticationService.Tests.Repository.UserRepositoryMethods;
 public class CreateAsync: UserRepositoryTest
 {
     [Test]
-    public async Task AddsDataAndSavesChanges()
+    public async Task CreatesUserAndSavesChanges()
     {
         var entity = new UserEntity { Username = "NewUsername" };
 
-        await this.repository.CreateAsync(entity);
+        await this.Repository.CreateAsync(entity);
 
-        this.contextMock.Verify(context => context.AddAsync(entity, default), Times.Once);
-        this.contextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
+        this.ContextMock.Verify(context => context.AddAsync(entity, default), Times.Once);
+        this.ContextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
     }
 
     [Test]
     public async Task RequiresUsernameNotToBeTaken()
     {
         var entity = new UserEntity { Username = "ExistingUsername" };
-        await this.repository.CreateAsync(entity);
+        await this.Repository.CreateAsync(entity);
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => this.repository.CreateAsync(entity));
+        Assert.ThrowsAsync<InvalidOperationException>(() => this.Repository.CreateAsync(entity));
     }
 }

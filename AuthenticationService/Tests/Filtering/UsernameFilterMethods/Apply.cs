@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Filtering.UsernameFilterMethods;
 
+[Category("Filtering")]
 public class Apply
 {
     [TestCase("2", 1)]

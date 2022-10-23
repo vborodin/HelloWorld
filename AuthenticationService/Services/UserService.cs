@@ -11,39 +11,48 @@ namespace AuthenticationService.Services;
 
 public class UserService : IUserService
 {
-    private readonly IRepository<UserEntity> repository;
+    private readonly IRepository<UserEntity> userRepository;
+    private readonly IRepository<RoleEntity> roleRepository;
     private readonly IHashCalculator<byte[], string> hashCalculator;
     private readonly ISaltGenerator<string> saltGenerator;
     private readonly string pepper;
 
-    public UserService(IRepository<UserEntity> repository, IHashCalculator<byte[], string> hashCalculator, ISaltGenerator<string> saltGenerator, string pepper)
+    public UserService(
+        IRepository<UserEntity> userRepository,
+        IRepository<RoleEntity> roleRepository,
+        IHashCalculator<byte[], string> hashCalculator,
+        ISaltGenerator<string> saltGenerator,
+        string pepper)
     {
-        this.repository = repository;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.hashCalculator = hashCalculator;
         this.saltGenerator = saltGenerator;
         this.pepper = pepper;
     }
 
-    public async Task CreateUserAsync(string username, string password, string? email = null, string? givenName = null, string? surname = null)
+    public async Task CreateUserAsync(string username, string password)
     {
+        var defaultRole = "User";
+        var filter = new RoleFilter(defaultRole);
+        var roleEntity = await this.roleRepository.GetAsync(filter).SingleOrDefaultAsync();
+        roleEntity = roleEntity ?? throw new RoleAssignmentException($"Default {nameof(RoleEntity)} \"{defaultRole}\" does not exist in the database");
+
         var salt = this.saltGenerator.Generate();
         var hashingData = new SaltPepperUTF8HashingData(password, salt, this.pepper);
         var hash = this.hashCalculator.Calculate(hashingData.Data);
 
-        var data = new UserEntity()
+        var entity = new UserEntity()
         {
-            Email = email,
-            GivenName = givenName,
+            Username = username,
             PasswordHash = hash,
-            Role = "User",
             Salt = salt,
-            Surname = surname,
-            Username = username
+            Roles = new List<RoleEntity> { roleEntity }
         };
 
         try
         {
-            await this.repository.CreateAsync(data);
+            await this.userRepository.CreateAsync(entity);
         }
         catch (InvalidOperationException e)
         {
@@ -54,26 +63,40 @@ public class UserService : IUserService
     public async Task<UserModel?> GetUserAsync(string username, string password)
     {
         var filter = new UsernameFilter(username);
-        var userEntity = await this.repository.GetAsync(filter).FirstOrDefaultAsync();
+        var userEntity = await this.userRepository.GetAsync(filter).SingleOrDefaultAsync();
         if (userEntity != null && IsPasswordValid(password, userEntity.PasswordHash, userEntity.Salt))
         {
             return new UserModel(
                 Username: userEntity.Username,
-                Email: userEntity.Email,
-                Role: userEntity.Role,
-                Surname: userEntity.Surname,
-                GivenName: userEntity.GivenName);
+                Roles: userEntity.Roles.Select(r => r.Role));
         }
         return null;
     }
 
-    public async Task SetRoleAsync(string username, string role)
+    public async Task AddRoleAsync(string username, string role)
+    {
+        var userFilter = new UsernameFilter(username);
+        var userEntity = await this.userRepository.GetAsync(userFilter).SingleOrDefaultAsync();
+        userEntity = userEntity ?? throw new RoleAssignmentException($"{nameof(UserEntity)} \"{username}\" does not exist");
+        
+        var roleFilter = new RoleFilter(role);
+        var roleEntity = await this.roleRepository.GetAsync(roleFilter).SingleOrDefaultAsync();
+        roleEntity = roleEntity ?? throw new RoleAssignmentException($"{nameof(RoleEntity)} \"{role}\" does not exist");
+        userEntity.Roles.Add(roleEntity);
+        await this.userRepository.UpdateAsync(userEntity);
+    }
+
+    public async Task RemoveRoleAsync(string username, string role)
     {
         var filter = new UsernameFilter(username);
-        var userEntity = await this.repository.GetAsync(filter).FirstOrDefaultAsync();
-        userEntity = userEntity ?? throw new RoleAssignmentException($"User \"{username}\" does not exist");
-        userEntity.Role = role;
-        await this.repository.UpdateAsync(userEntity);
+        var userEntity = await this.userRepository.GetAsync(filter).SingleOrDefaultAsync();
+        userEntity = userEntity ?? throw new RoleAssignmentException($"{nameof(UserEntity.Username)} \"{username}\" does not exist");
+        
+        var roleEntity = userEntity.Roles.SingleOrDefault(x => x.Role == role);
+        roleEntity = roleEntity ?? throw new RoleAssignmentException($"{nameof(RoleEntity)} \"{role}\" is not assigned to {nameof(UserEntity)} \"{username}\"");
+
+        userEntity.Roles.Remove(roleEntity);
+        await this.userRepository.UpdateAsync(userEntity);
     }
 
     private bool IsPasswordValid(string password, string passwordHash, string salt)

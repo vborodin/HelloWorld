@@ -6,7 +6,9 @@ public interface IUserService
 {
     Task<UserModel?> GetUserAsync(string username, string password);
 
-    Task CreateUserAsync(string username, string password, string? email = null, string? givenName = null, string? surname = null);
+    Task CreateUserAsync(string username, string password);
 
-    Task SetRoleAsync(string username, string role);
+    Task AddRoleAsync(string username, string role);
+
+    Task RemoveRoleAsync(string username, string role);
 }

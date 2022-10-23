@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Hashing.SaltPepperUTF8HashingDataMethods;
 
+[Category("Hashing")]
 public class DataProperty
 {
     [Test]

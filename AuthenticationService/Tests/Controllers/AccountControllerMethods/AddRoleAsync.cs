@@ -9,32 +9,33 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
-public class SetRoleAsync: AccountControllerTest
+public class AddRoleAsync: AccountControllerTest
 {
     [Test]
-    public async Task SetsRole()
+    public async Task AppliesRole()
     {
-        var result = await this.controller.SetRoleAsync(
-            setRoleDto: new SetRoleDto(
+        var result = await this.controller.AddRoleAsync(
+            usernameRoleDto: new UsernameRoleDto(
                 Username: "ExistingUser",
                 Role: "NewRole"));
 
         Assert.True(result is OkResult);
-        this.userServiceMock.Verify(s => s.SetRoleAsync("ExistingUser", "NewRole"), Times.Once);
+        this.userServiceMock.Verify(m => m.AddRoleAsync("ExistingUser", "NewRole"), Times.Once);
     }
 
     [Test]
-    public async Task RequiresExistingUser()
+    public async Task RequiresExistingUserAndExistingRole()
     {
         this.userServiceMock
-            .Setup(m => m.SetRoleAsync(
+            .Setup(m => m.AddRoleAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>()))
             .Throws<RoleAssignmentException>();
 
-        var result = await this.controller.SetRoleAsync(new SetRoleDto(
-            Username: "InvalidUser",
-            Role: "NewRole"));
+        var result = await this.controller.AddRoleAsync(
+            usernameRoleDto: new UsernameRoleDto(
+                Username: "NonExistingUser",
+                Role: "NewRole"));
 
         Assert.True(result is BadRequestObjectResult);
     }

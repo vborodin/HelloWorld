@@ -1,6 +1,7 @@
 ﻿using System.Text;
 
 using AuthenticationService.Repository.Entities;
+using AuthenticationService.Repository.Filter;
 using AuthenticationService.Services.Exceptions;
 
 using Moq;
@@ -14,47 +15,56 @@ public class CreateUserAsync: UserServiceTest
     [Test]
     public async Task CreatesEntityInRepository()
     {
-        var storedEntities = new List<UserEntity>();
         this.saltGeneratorMock
             .Setup(m => m.Generate())
             .Returns("Salt");
         this.hashCalculatorMock
             .Setup(m => m.Calculate(It.IsAny<byte[]>()))
             .Returns((byte[] bytes) => Encoding.UTF8.GetString(bytes) + "Hashed");
-        this.repositoryMock
+        this.userRepositoryMock
             .Setup(m => m.CreateAsync(It.IsAny<UserEntity>()))
-            .Callback<UserEntity>(entity => { storedEntities.Add(entity); });
+            .Callback<UserEntity>(entity => { this.userEntities.Add(entity); });
+        this.roleRepositoryMock
+            .Setup(m => m.GetAsync(It.IsAny<IFilter<RoleEntity>>()))
+            .Returns<IFilter<RoleEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.roleEntities.AsQueryable())));
 
         await this.service.CreateUserAsync(
             username: "NewUsername",
-            password: "NewPassword",
-            email: "NewEmail",
-            givenName: "NewGivenName",
-            surname: "NewSurname");
+            password: "NewPassword");
 
         this.saltGeneratorMock.Verify(m => m.Generate(), Times.Once);
         this.hashCalculatorMock.Verify(m => m.Calculate(It.IsAny<byte[]>()), Times.Once);
-        this.repositoryMock.Verify(m => m.CreateAsync(It.IsAny<UserEntity>()), Times.Once);
-        var entity = storedEntities.Single();
+        this.userRepositoryMock.Verify(m => m.CreateAsync(It.IsAny<UserEntity>()), Times.Once);
+        var entity = this.userEntities.Last();
         Assert.AreEqual("NewUsername", entity.Username);
         Assert.AreEqual("NewPasswordSaltPepperHashed", entity.PasswordHash);
         Assert.AreEqual("Salt", entity.Salt);
-        Assert.AreEqual("User", entity.Role);
-        Assert.AreEqual("NewEmail", entity.Email);
-        Assert.AreEqual("NewGivenName", entity.GivenName);
-        Assert.AreEqual("NewSurname", entity.Surname);
+        Assert.AreEqual("User", entity.Roles.Select(x => x.Role).Single());
     }
 
     [Test]
     public void RequiresUsernameNotToBeTaken()
     {
-        this.repositoryMock
+        this.userRepositoryMock
             .Setup(m => m.CreateAsync(It.IsAny<UserEntity>()))
             .Throws(new InvalidOperationException());
+        this.roleRepositoryMock
+            .Setup(m => m.GetAsync(It.IsAny<IFilter<RoleEntity>>()))
+            .Returns<IFilter<RoleEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.roleEntities.AsQueryable())));
         this.saltGeneratorMock
             .Setup(m => m.Generate())
             .Returns("Salt");
 
         Assert.ThrowsAsync<RegistrationException>(() => this.service.CreateUserAsync("TestUsername", "TestPassword"));
+    }
+
+    [Test]
+    public void RequiresDefaultRoleToExist()
+    {
+        this.roleRepositoryMock
+            .Setup(m => m.GetAsync(It.IsAny<IFilter<RoleEntity>>()))
+            .Returns(AsyncEnumerable.Empty<RoleEntity>());
+
+        Assert.ThrowsAsync<RoleAssignmentException>(() => this.service.CreateUserAsync("TestUsername", "TestPassword"));
     }
 }

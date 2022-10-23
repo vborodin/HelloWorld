@@ -9,25 +9,24 @@ namespace AuthenticationService.Tests.Repository.UserRepositoryMethods;
 public class UpdateAsync: UserRepositoryTest
 {
     [Test]
-    public async Task UpdatesDataAndSavesChanges()
+    public async Task UpdatesUserAndSavesChanges()
     {
-        var entity = new UserEntity
-        {
-            Id = 1,
-            Username = "Username"
-        };
-        this.data.Add(entity);
+        var entity = new UserEntity { Id = 1, Username = "Username" };
+        this.Entities.Add(entity);
         
-        await this.repository.UpdateAsync(entity);
+        await this.Repository.UpdateAsync(entity);
 
-        this.contextMock.Verify(context => context.Update(entity), Times.Once);
-        this.contextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
+        this.ContextMock.Verify(context => context.Update(entity), Times.Once);
+        this.ContextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
+        // Update mock adds entity in the Data without removing old entry
+        Assert.AreEqual(2, this.Entities.Count);
+        Assert.AreEqual(this.Entities.Last(), entity);
     }
 
     [Test]
     public void RequiresExistingUser()
     {
         var data = new UserEntity { Id = 1 };
-        Assert.ThrowsAsync<InvalidOperationException>(() => this.repository.UpdateAsync(data));
+        Assert.ThrowsAsync<InvalidOperationException>(() => this.Repository.UpdateAsync(data));
     }
 }
