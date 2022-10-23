@@ -1,3 +1,5 @@
-﻿namespace AuthenticationService.Controllers.Dtos;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record UsernameRoleDto(string Username, string Role);
+namespace AuthenticationService.Controllers.Dtos;
+
+public record UsernameRoleDto([Required] string Username, [Required] string Role);

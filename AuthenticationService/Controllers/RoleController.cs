@@ -18,7 +18,7 @@ public class RoleController : ControllerBase
         this.roleService = roleService;
     }
 
-    [HttpPost]
+    [HttpPost("Create")]
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
@@ -35,7 +35,7 @@ public class RoleController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete]
+    [HttpDelete("Delete")]
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

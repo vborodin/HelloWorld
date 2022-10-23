@@ -39,6 +39,7 @@ public static class DependencyInjectionSetup
                 serviceProvider.GetRequiredService<ISaltGenerator<string>>(),
                 builder.Configuration["Security:Pepper"]);
         });
+        builder.Services.AddScoped<IRoleService, RoleService>();
         return builder;
     }
 }

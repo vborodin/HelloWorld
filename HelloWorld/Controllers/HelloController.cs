@@ -16,6 +16,13 @@ public class HelloController: ControllerBase
         var name = this.HttpContext.User.Claims
             .Where(x => x.Type == ClaimTypes.NameIdentifier)
             .Select(x => x.Value).FirstOrDefault() ?? "null";
-        return $"Hello, {name}!";
+        var roles = this.HttpContext.User.Claims
+            .Where(x => x.Type == ClaimTypes.Role)
+            .Aggregate("", (roles, claim) =>
+            {
+                var prev = string.IsNullOrWhiteSpace(roles) ? "" : $"{roles}, ";
+                return $"{prev}{claim.Value}";
+            });
+        return $"Hello, {name}! Your roles: {roles}";
     }
 }
