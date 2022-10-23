@@ -14,7 +14,7 @@ public class GetUserAsync: UserServiceTest
     {
         this.userRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
-            .Returns(ToAsyncEnumerable(this.userEntities));
+            .Returns<IFilter<UserEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.userEntities.AsQueryable())));
         this.hashCalculatorMock
             .Setup(m => m.Calculate(It.IsAny<byte[]>()))
             .Returns("ValidHash");
@@ -42,7 +42,7 @@ public class GetUserAsync: UserServiceTest
     {
         this.userRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
-            .Returns(ToAsyncEnumerable(this.userEntities));
+            .Returns<IFilter<UserEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.userEntities.AsQueryable())));
         this.hashCalculatorMock
             .Setup(m => m.Calculate(It.IsAny<byte[]>()))
             .Returns("InvalidHash");

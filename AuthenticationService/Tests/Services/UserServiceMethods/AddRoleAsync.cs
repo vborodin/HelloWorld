@@ -21,7 +21,7 @@ public class AddRoleAsync: UserServiceTest
             .Callback<UserEntity>(entity => this.userEntities.Add(entity));
         this.roleRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<RoleEntity>>()))
-            .Returns(ToAsyncEnumerable(this.roleEntities.Where(x => x.Role == "NewRole")));
+            .Returns<IFilter<RoleEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.roleEntities.AsQueryable())));
 
         await this.service.AddRoleAsync(username: "ValidUsername", role: "NewRole");
         
@@ -49,7 +49,7 @@ public class AddRoleAsync: UserServiceTest
     {
         this.userRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
-            .Returns(ToAsyncEnumerable(this.userEntities));
+            .Returns<IFilter<UserEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.userEntities.AsQueryable())));
         this.roleRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<RoleEntity>>()))
             .Returns(AsyncEnumerable.Empty<RoleEntity>());

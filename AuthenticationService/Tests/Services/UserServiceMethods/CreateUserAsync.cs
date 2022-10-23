@@ -26,7 +26,7 @@ public class CreateUserAsync: UserServiceTest
             .Callback<UserEntity>(entity => { this.userEntities.Add(entity); });
         this.roleRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<RoleEntity>>()))
-            .Returns(ToAsyncEnumerable(this.roleEntities.Where(x => x.Role == "User")));
+            .Returns<IFilter<RoleEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.roleEntities.AsQueryable())));
 
         await this.service.CreateUserAsync(
             username: "NewUsername",
@@ -50,7 +50,7 @@ public class CreateUserAsync: UserServiceTest
             .Throws(new InvalidOperationException());
         this.roleRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<RoleEntity>>()))
-            .Returns(ToAsyncEnumerable(this.roleEntities.Where(x => x.Role == "User")));
+            .Returns<IFilter<RoleEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.roleEntities.AsQueryable())));
         this.saltGeneratorMock
             .Setup(m => m.Generate())
             .Returns("Salt");

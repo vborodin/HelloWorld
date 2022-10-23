@@ -15,7 +15,7 @@ public class RemoveRoleAsync : UserServiceTest
     {
         this.userRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
-            .Returns(ToAsyncEnumerable(this.userEntities));
+            .Returns<IFilter<UserEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.userEntities.AsQueryable())));
 
         await this.service.RemoveRoleAsync("ValidUsername", "AssignedRole");
 
@@ -39,7 +39,7 @@ public class RemoveRoleAsync : UserServiceTest
     {
         this.userRepositoryMock
             .Setup(m => m.GetAsync(It.IsAny<IFilter<UserEntity>>()))
-            .Returns(ToAsyncEnumerable(this.userEntities));
+            .Returns<IFilter<UserEntity>>(filter => ToAsyncEnumerable(filter.Apply(this.userEntities.AsQueryable())));
 
         Assert.ThrowsAsync<RoleAssignmentException>(() => this.service.RemoveRoleAsync("ValidUsername", "NotAssignedRole"));
     }
