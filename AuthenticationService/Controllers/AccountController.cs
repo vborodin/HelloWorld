@@ -25,7 +25,7 @@ public class AccountController : ControllerBase
     [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
-    public async Task<IActionResult> LoginAsync([FromBody] UsernamePasswordDto usernamePasswordDto, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
+    public async Task<ActionResult> LoginAsync([FromBody] UsernamePasswordDto usernamePasswordDto, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
     {
         if (!IsExpiratonPeriodValid(expirationPeriodMinutes))
         {
@@ -59,7 +59,7 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("Role")]
+    [HttpPost("AssignRole")]
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
@@ -80,7 +80,7 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("Role")]
+    [HttpPost("RemoveRole")]
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
