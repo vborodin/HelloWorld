@@ -9,12 +9,12 @@ using NUnit.Framework;
 
 namespace AuthenticationService.Tests.Controllers.AccountControllerMethods;
 
-public class SetRoleAsync: AccountControllerTest
+public class AddRoleAsync: AccountControllerTest
 {
     [Test]
-    public async Task SetsRole()
+    public async Task AppliesRole()
     {
-        var result = await this.controller.SetRoleAsync(
+        var result = await this.controller.AddRoleAsync(
             setRoleDto: new SetRoleDto(
                 Username: "ExistingUser",
                 Role: "NewRole"));
@@ -32,9 +32,27 @@ public class SetRoleAsync: AccountControllerTest
                 It.IsAny<string>()))
             .Throws<RoleAssignmentException>();
 
-        var result = await this.controller.SetRoleAsync(new SetRoleDto(
-            Username: "InvalidUser",
-            Role: "NewRole"));
+        var result = await this.controller.AddRoleAsync(
+            setRoleDto: new SetRoleDto(
+                Username: "NonExistingUser",
+                Role: "NewRole"));
+
+        Assert.True(result is BadRequestObjectResult);
+    }
+
+    [Test]
+    public async Task RequiresExistingRole()
+    {
+        this.userServiceMock
+            .Setup(m => m.AddRoleAsync(
+                It.IsAny<string>(),
+                It.IsAny<string>()))
+            .Throws<RoleExistenceException>();
+
+        var result = await this.controller.AddRoleAsync(
+            setRoleDto: new SetRoleDto(
+                Username: "ExistingUser",
+                Role: "NotExistingRole"));
 
         Assert.True(result is BadRequestObjectResult);
     }

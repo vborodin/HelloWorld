@@ -7,6 +7,8 @@ using AuthenticationService.Services.TokenGenerator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using NUnit.Framework;
+
 namespace AuthenticationService.Controllers;
 
 [Route("api/[controller]")]
@@ -63,7 +65,7 @@ public class AccountController : ControllerBase
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-    public async Task<ActionResult> SetRoleAsync([FromBody] SetRoleDto setRoleDto)
+    public async Task<ActionResult> AddRoleAsync([FromBody] SetRoleDto setRoleDto)
     {
         try
         {
@@ -73,7 +75,18 @@ public class AccountController : ControllerBase
         {
             return BadRequest(e.Message);
         }
+        catch (RoleExistenceException e)
+        {
+            return BadRequest(e.Message);
+        }
         return Ok();
+    }
+
+    [HttpDelete("Role")]
+    [Authorize(Roles = "Administrator")]
+    public async Task<ActionResult> RemoveRoleAsync()
+    {
+        throw new NotImplementedException();
     }
 
     private bool IsExpiratonPeriodValid(int expirationPeriodMinutes)
