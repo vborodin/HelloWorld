@@ -59,6 +59,23 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
+    [HttpDelete("Delete")]
+    [Authorize(Roles = "Administrator")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    public async Task<ActionResult> DeleteAsync([FromBody] UsernameDto usernameDto)
+    {
+        try
+        {
+            await this.userService.DeleteUserAsync(usernameDto.Username);
+        }
+        catch (UserExistenceException e)
+        {
+            return BadRequest(e.Message);
+        }
+        return Ok();
+    }
+
     [HttpPost("AssignRole")]
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
