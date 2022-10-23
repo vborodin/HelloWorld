@@ -73,6 +73,15 @@ public class UserService : IUserService
         return null;
     }
 
+    public async Task DeleteUserAsync(string username)
+    {
+        var filter = new UsernameFilter(username);
+        var userEntity = await this.userRepository.GetAsync(filter).SingleOrDefaultAsync();
+        userEntity = userEntity ?? throw new UserExistenceException($"{nameof(UserEntity)} \"{username}\" does not exist");
+
+        await this.userRepository.DeleteAsync(userEntity);
+    }
+
     public async Task AddRoleAsync(string username, string role)
     {
         var userFilter = new UsernameFilter(username);

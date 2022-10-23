@@ -8,6 +8,8 @@ public interface IUserService
 
     Task CreateUserAsync(string username, string password);
 
+    Task DeleteUserAsync(string username);
+
     Task AddRoleAsync(string username, string role);
 
     Task RemoveRoleAsync(string username, string role);
