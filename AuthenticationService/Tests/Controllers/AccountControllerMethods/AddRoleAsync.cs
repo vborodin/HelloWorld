@@ -15,16 +15,16 @@ public class AddRoleAsync: AccountControllerTest
     public async Task AppliesRole()
     {
         var result = await this.controller.AddRoleAsync(
-            setRoleDto: new SetRoleDto(
+            usernameRoleDto: new UsernameRoleDto(
                 Username: "ExistingUser",
                 Role: "NewRole"));
 
         Assert.True(result is OkResult);
-        this.userServiceMock.Verify(s => s.AddRoleAsync("ExistingUser", "NewRole"), Times.Once);
+        this.userServiceMock.Verify(m => m.AddRoleAsync("ExistingUser", "NewRole"), Times.Once);
     }
 
     [Test]
-    public async Task RequiresExistingUser()
+    public async Task RequiresExistingUserAndExistingRole()
     {
         this.userServiceMock
             .Setup(m => m.AddRoleAsync(
@@ -33,26 +33,9 @@ public class AddRoleAsync: AccountControllerTest
             .Throws<RoleAssignmentException>();
 
         var result = await this.controller.AddRoleAsync(
-            setRoleDto: new SetRoleDto(
+            usernameRoleDto: new UsernameRoleDto(
                 Username: "NonExistingUser",
                 Role: "NewRole"));
-
-        Assert.True(result is BadRequestObjectResult);
-    }
-
-    [Test]
-    public async Task RequiresExistingRole()
-    {
-        this.userServiceMock
-            .Setup(m => m.AddRoleAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>()))
-            .Throws<RoleExistenceException>();
-
-        var result = await this.controller.AddRoleAsync(
-            setRoleDto: new SetRoleDto(
-                Username: "ExistingUser",
-                Role: "NotExistingRole"));
 
         Assert.True(result is BadRequestObjectResult);
     }

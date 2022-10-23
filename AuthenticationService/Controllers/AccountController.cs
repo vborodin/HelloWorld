@@ -7,8 +7,6 @@ using AuthenticationService.Services.TokenGenerator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using NUnit.Framework;
-
 namespace AuthenticationService.Controllers;
 
 [Route("api/[controller]")]
@@ -27,13 +25,13 @@ public class AccountController : ControllerBase
     [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
-    public async Task<IActionResult> LoginAsync([FromBody] UserPasswordDto userLogin, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
+    public async Task<IActionResult> LoginAsync([FromBody] UsernamePasswordDto usernamePasswordDto, [FromQuery] string audience, [FromQuery] int expirationPeriodMinutes = 15)
     {
         if (!IsExpiratonPeriodValid(expirationPeriodMinutes))
         {
             return BadRequest($"{nameof(expirationPeriodMinutes)} must be positive");
         }
-        var user = await this.userService.GetUserAsync(userLogin.Username, userLogin.Password);
+        var user = await this.userService.GetUserAsync(usernamePasswordDto.Username, usernamePasswordDto.Password);
         if (user == null)
         {
             return Unauthorized("Invalid username or password");
@@ -45,13 +43,13 @@ public class AccountController : ControllerBase
     [HttpPost("Register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-    public async Task<ActionResult> RegisterAsync([FromBody] UserPasswordDto userPasswordDto)
+    public async Task<ActionResult> RegisterAsync([FromBody] UsernamePasswordDto usernamePasswordDto)
     {
         try
         {
             await this.userService.CreateUserAsync(
-                username: userPasswordDto.Username,
-                password: userPasswordDto.Password);
+                username: usernamePasswordDto.Username,
+                password: usernamePasswordDto.Password);
         }
         catch (RegistrationException e)
         {
@@ -65,11 +63,11 @@ public class AccountController : ControllerBase
     [Authorize(Roles = "Administrator")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-    public async Task<ActionResult> AddRoleAsync([FromBody] SetRoleDto setRoleDto)
+    public async Task<ActionResult> AddRoleAsync([FromBody] UsernameRoleDto usernameRoleDto)
     {
         try
         {
-            await this.userService.AddRoleAsync(setRoleDto.Username, setRoleDto.Role);
+            await this.userService.AddRoleAsync(usernameRoleDto.Username, usernameRoleDto.Role);
         }
         catch (RoleAssignmentException e)
         {
@@ -84,9 +82,19 @@ public class AccountController : ControllerBase
 
     [HttpDelete("Role")]
     [Authorize(Roles = "Administrator")]
-    public async Task<ActionResult> RemoveRoleAsync()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    public async Task<ActionResult> RemoveRoleAsync([FromBody] UsernameRoleDto usernameRoleDto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await this.userService.RemoveRoleAsync(usernameRoleDto.Username, usernameRoleDto.Role);
+        }
+        catch (RoleAssignmentException e)
+        {
+            return BadRequest(e.Message);
+        }
+        return Ok();
     }
 
     private bool IsExpiratonPeriodValid(int expirationPeriodMinutes)

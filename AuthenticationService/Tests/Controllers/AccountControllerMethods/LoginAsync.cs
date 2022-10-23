@@ -34,7 +34,7 @@ public class LoginAsync: AccountControllerTest
                         Roles: new List<string>())));
 
         var result = await this.controller.LoginAsync(
-            userLogin: new UserPasswordDto(
+            usernamePasswordDto: new UsernamePasswordDto(
                 Username: "ExistingUser",
                 Password: "ValidPassword"),
             audience: "TestAudience",
@@ -54,7 +54,7 @@ public class LoginAsync: AccountControllerTest
             .Returns(Task.FromResult<UserModel?>(null));
 
         var result = await this.controller.LoginAsync(
-            userLogin: new UserPasswordDto(
+            usernamePasswordDto: new UsernamePasswordDto(
                 Username: "InvalidUser",
                 Password: "InvalidPassword"),
             audience: "TestAudience",
@@ -69,7 +69,7 @@ public class LoginAsync: AccountControllerTest
     public async Task RequiresPositiveExpirationPeriod(int expirationPeriod)
     {
         var result = await this.controller.LoginAsync(
-            userLogin: new UserPasswordDto(
+            usernamePasswordDto: new UsernamePasswordDto(
                 Username: "ExistingUser",
                 Password: "ValidPassword"),
             audience: "TestAudience",

@@ -26,7 +26,7 @@ public class RegisterAsync: AccountControllerTest
             });
 
         var result = await this.controller.RegisterAsync(
-            userPasswordDto: new UserPasswordDto(
+            usernamePasswordDto: new UsernamePasswordDto(
                 Username: "NewUsername",
                 Password: "NewPassword"));
         var user = data.Single(x => x.Username == "NewUsername");
@@ -46,7 +46,7 @@ public class RegisterAsync: AccountControllerTest
             .Throws(new RegistrationException());
 
         var result = await this.controller.RegisterAsync(
-            userPasswordDto: new UserPasswordDto(
+            usernamePasswordDto: new UsernamePasswordDto(
                 Username: "ExistingUser",
                 Password: "NewPassword"));
 
