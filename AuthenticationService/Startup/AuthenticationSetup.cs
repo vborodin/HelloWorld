@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Common.Authentication;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -8,10 +10,10 @@ public static class AuthenticationSetup
 {
     public static WebApplicationBuilder RegisterAuthentication(this WebApplicationBuilder builder)
     {
-        builder.Services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer((options) => {
-                options.TokenValidationParameters = new TokenValidationParameters()
+        builder.Services.AddAuthentication(options => options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme)
+            .AddScheme<JwtBearerOptions, VerifiedJwtBearerHandler>(JwtBearerDefaults.AuthenticationScheme, options => {
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
