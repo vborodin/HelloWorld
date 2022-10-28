@@ -8,13 +8,17 @@ services:
       dockerfile: AuthenticationService/Dockerfile
     depends_on:
       - "db"
+      - "rabbitmq"
   helloworld:
     image: ${DOCKER_REGISTRY-}helloworld
     build:
       context: .
       dockerfile: HelloWorld/Dockerfile
+    depends_on:
+      - "rabbitmq"
   db:
     image: postgres
+    container_name: database
     environment:
       POSTGRES_PASSWORD: example
     ports:
@@ -23,5 +27,12 @@ services:
       - "adminer"
   adminer:
     image: adminer
+    container_name: db-adminer
     ports:
       - "8080"
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
